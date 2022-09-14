@@ -1,0 +1,87 @@
+
+---
+output: # rmarkdown::github_document
+  html_document:
+  pdf_document: default
+  word_document: default
+title: "Assignment 2.  Operations on Numeric Vectors"
+---
+
+***Note*:** *This problems make uses of the element-to-element property of operations on numeric vectors to calculate pattern summation.* 
+
+***How to do it?***: 
+
+- Open the Rmarkdown file of this assignment ([link](assignment2.Rmd)) in Rstudio. 
+
+- Right under each question, insert  a code chunk (you can use the hotkey `Ctrl + Alt + I` to add a code chunk) and code the solution for the question. 
+
+- `Knit` the rmarkdown file (hotkey: `Ctrl + Alt + K`) to export an html.  
+
+-  Publish the html file to your Githiub Page. 
+
+***Sample Codes***: You can find similar codes for this assignment here [link](assignment2_sample_code.html)
+
+
+***Submissions***: Submit the link on Github of the assignment to Canvas under Assignment 2. 
+
+
+Problems
+-------
+-------
+
+
+1. Calculate: 
+
+
+$$
+S = 1 + 4 + 7 + 11 +... + 100
+$$
+```{r}
+x <- seq(1, 100, 3)
+sum(x)
+```
+
+
+2. Calculate: 
+
+
+$$
+S = 1^{100} + 2^{100} + 3^{100} +...+100^{100}
+$$
+```{r}
+x <- c(1:100)
+sum(x^100)
+```
+
+3. Calculate: 
+
+$$
+S = \frac{1}{1\cdot 2}+\frac{1}{2 \cdot 3}+...+\frac{1}{100\cdot 101}
+$$
+```{r}
+x <- seq(1,100,1)
+y <- seq(2,101,1)
+sum(1/(x*y))
+```
+
+4. Calculate: 
+
+$$
+S = \frac{1}{1\cdot 2 \cdot 3}+\frac{1}{2 \cdot 3 \cdot 4}+...+\frac{1}{100\cdot 101 \cdot 102}
+$$
+```{r}
+x <- seq(1,100,1)
+y <- seq(2,101,1)
+z <- seq(3,102,1)
+sum(1/(x*y*z))
+```
+
+5. Calculate: 
+
+$$
+S = 1^1 + 3^3 + 5^5 + 7^7 +....+101^{101}
+$$
+```{r}
+x <- seq(1,101,2)
+sum(x^x)
+```
