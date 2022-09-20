@@ -203,7 +203,7 @@ class(dataset$No.)
 cor(dataset$MIN, dataset$PTS)
 
 # Evaluate average number of minutes played based on disqualification count
-by(dataset$MIN, dataset$DQ, FUN = mean)
+by(dataset$AVGMIN, dataset$DQ, FUN = mean)
 
 # Efficiency variable creation to determine which players have a A/TO ratio less than 1.0
 dataset$EFF <- ifelse(dataset$A.TO<1.0,"efficient","inefficient")
