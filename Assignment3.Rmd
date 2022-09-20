@@ -1,0 +1,215 @@
+
+---
+output: # rmarkdown::github_document
+  html_document:
+  pdf_document: default
+  word_document: default
+title: "Assignment 3.  Working with Data Frame. Base R Style"
+---
+
+***Note*:** *This assignment practices working with Data Frame using Base R.*
+
+***How to do it?***: 
+
+- Open the Rmarkdown file of this assignment ([link](assignment3.Rmd)) in Rstudio. 
+
+- Right under each question, insert  a code chunk (you can use the hotkey `Ctrl + Alt + I` to add a code chunk) and code the solution for the question. 
+
+- `Knit` the rmarkdown file (hotkey: `Ctrl + Alt + K`) to export an html.  
+
+-  Publish the html file to your Githiub Page. 
+
+***Submission***: Submit the link on Github of the assignment to Canvas under Assignment 3. 
+
+-------
+
+Problems
+-------
+ \
+
+1. Create the following data frame
+
+| Rank 	| Age 	| Name  	|
+|:------	|:-----	|:-------	|
+| 0    	| 28  	| Tom   	|
+| 1    	| 34  	| Jack  	|
+| 2    	| 29  	| Steve 	|
+| 3    	| 42  	| Ricky 	|
+```{r}
+df <- data.frame(Rank = c(0,1,2,3),
+                 Age = c(28,34,29,42),
+                 Name = c('Tom','Jack','Steve','Ricky'))
+df
+```
+
+2. Use `read.csv` to import the Covid19 Vaccination data from WHO: [link](https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv).
+```{r}
+q2 <- read.csv('https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv')
+```
+
+2. Show the names of the variables in the data
+```{r}
+names(q2)
+```
+
+3. How many columns and rows does the data have? 
+```{r}
+str(q2)
+```
+
+4. How many missing values are there?  Show the missing values by columns.  What variable has the most number of missing values?
+```{r}
+sum(is.na(q2))
+colSums(is.na(q2))
+```
+
+5. What is the class of the `date` column. Change the `date` columns to `date` type using the `as.Date` function. Show the new class of the `date` column. 
+```{r}
+class(q2$date)
+q2$date <- as.Date(q2$date)
+class(q2$date)
+```
+
+6. Capitalize the names of all the variables
+```{r}
+names(q2)[names(q2) == 'date'] <- 'Date'
+names(q2)[names(q2) == 'state'] <- 'State'
+names(q2)[names(q2) == 'fips'] <- 'Fips'
+names(q2)[names(q2) == 'cases'] <- 'Cases'
+names(q2)[names(q2) == 'deaths'] <- 'Deaths'
+names(q2)
+```
+
+7. Find the average number of cases per day. Find the maximum cases a day.  
+```{r}
+mean(q2$Cases, na.rm=TRUE)
+max(q2$Cases, na.rm=TRUE)
+```
+
+8. How many states are there in the data?  
+```{r}
+table(q2$State)
+length(table(q2$State))
+```
+
+9. Create a new variable `weekdays` to store the weekday for each rows. 
+```{r}
+q2$Weekdays <- weekdays(q2$Date)
+```
+
+10. Create the categorical variable `death2` variable taking the values as follows
+
+- `has_death` if there is a death that day
+-  `no_death` if there is no death that day
+
+Find the frequency and relative frequency of `no_death` and `has_death`. 
+```{r}
+q2$death2 <- ifelse(q2$Deaths>0,"has_death","no_death")
+table(q2$death2)
+
+freq <- table(q2$death2)
+freq
+rf <- table(q2$death2)/length(q2$death2)
+rf
+```
+
+11. Find the first quartile (Q1), second quartile (Q2) and and third quartile (Q3) of the variable `death`. (Hint:  Use the `summary` function)
+```{r}
+summary(q2$Deaths)
+```
+
+12. Create the categorical variable `death3` variable taking the values as follows
+
+- `low_death` if the number of deaths smaller than the 25 percentile (Q1)
+
+- `mid_death` if the number of deaths from Q1 to Q3
+
+- `high_death` if the number of deaths greater than Q3
+```{r}
+library(tidyverse)
+q2$death3 <- case_when(q2$Deaths<=846 ~ 'low_death',
+                    q2$Deaths<=4101 ~ 'mid_death',
+                    TRUE ~ 'high_death')
+table(q2$death3)
+```
+
+13. Find the average cases in Rhode Island in 2021
+```{r}
+df1 <- q2[(q2$State=='Rhode Island')&(q2$Date>='2021-01-01')&(q2$Date<'2022-01-01'),]
+mean(df1$Cases)
+```
+
+14. Find the median cases by weekdays in Rhode Island in 2021 
+```{r}
+df2 <- q2[(q2$State=='Rhode Island'),]
+by(q2$Cases,q2$Weekdays,median)
+```
+
+15. Compare the median cases in Rhode Island in June, July, August and September in 2021. 
+```{r}
+df3 <- q2[(q2$State=='Rhode Island')&(q2$Date>='2021-06-01')&(q2$Date<'2021-10-01'),]
+df3$Month <- substr(df3$Date,6,7)
+by(df3$Cases,df3$Month,median)
+```
+
+16.  Find your own dataset, import it and implement the following functions on the data
+
+- head
+- str
+- names
+- mean, min, max
+- table
+- is.na
+- colSums
+- class
+- cor
+- by
+- ifelse
+- case_when
+```{r}
+dataset <- read.csv('C:/Users/student/OneDrive - Bryant University/Desktop/Statistical_Analysis_with_R/Math421/Math421/21-22BballSeasonData.csv')
+
+head(dataset)
+str(dataset)
+names(dataset)
+mean(dataset$FGPCT)
+min(dataset$A.TO)
+max(dataset$MIN)
+table(dataset$Player)
+is.na(dataset)
+colSums(is.na(dataset))
+class(dataset$No.)
+cor(dataset$MIN, dataset$PTS)
+by(dataset$MIN, dataset$Player, FUN = mean)
+
+# Efficiency variable creation to determine which players have a A/TO ratio less than 1.0
+dataset$EFF <- ifelse(dataset$A.TO<1.0,"efficient","inefficient")
+table(dataset$EFF)
+
+# Ranking players into 3 tiers based on minutes played
+library(tidyverse)
+dataset$Workload <- case_when(dataset$MIN<=500 ~ 'low_workload',
+                    dataset$MIN<=1000 ~ 'mid_workload',
+                    TRUE ~ 'high_workload')
+table(dataset$Workload)
+```
+
+17.  In the dataset in #16, practice the follows.  You can reuse the code of 16. 
+
+- Create a categorical variable from a continuous variable
+- From one categorical variable, create a new categorical variable with fewer categories
+
+If you do not have a data, you can use [the titanic dataset](https://www.kaggle.com/competitions/titanic/overview), which can be downloaded at [this link](../data/titanic.csv)
+```{r}
+# Efficiency variable creation to determine which players have a A/TO ratio less than 1.0
+dataset$EFF <- ifelse(dataset$A.TO<1.0,"efficient","inefficient")
+table(dataset$EFF)
+
+# Ranking players into 3 tiers based on minutes played
+library(tidyverse)
+dataset$Workload <- case_when(dataset$MIN<=500 ~ 'low_workload',
+                    dataset$MIN<=1000 ~ 'mid_workload',
+                    TRUE ~ 'high_workload')
+table(dataset$Workload)
+```
+
