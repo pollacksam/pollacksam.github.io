@@ -667,6 +667,7 @@ functions on the data</li>
 </ul>
 <pre class="r"><code>dataset &lt;- read.csv(&#39;C:/Users/student/OneDrive - Bryant University/Desktop/Statistical_Analysis_with_R/Math421/Math421/21-22BballSeasonData.csv&#39;)
 
+# Quick preview of the 2021-22 Bryant Men&#39;s Basketball dataset
 head(dataset)</code></pre>
 <pre><code>##   No.        Player GP GS  MIN AVGMIN  FG FGA FGPCT X3FG X3FGA X3PCT  FT FTA
 ## 1  32    Peter Kiss 27 26  962   35.6 246 540  45.6   50   169  29.6 138 176
@@ -689,7 +690,8 @@ head(dataset)</code></pre>
 ## 4   0.4 219  8.8
 ## 5   0.3 115  7.2
 ## 6   0.5 193  6.2</code></pre>
-<pre class="r"><code>str(dataset)</code></pre>
+<pre class="r"><code># Labeling each variable type
+str(dataset)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    15 obs. of  32 variables:
 ##  $ No.   : int  32 5 3 34 30 15 10 4 22 2 ...
 ##  $ Player: chr  &quot;Peter Kiss&quot; &quot;Charles Pride&quot; &quot;Adham Eleeda&quot; &quot;Hall Elisias&quot; ...
@@ -723,18 +725,23 @@ head(dataset)</code></pre>
 ##  $ STL.G : num  1.7 1.6 0.7 0.4 0.3 0.5 0.8 0.3 0.1 0.5 ...
 ##  $ PTS   : int  680 566 329 219 115 193 142 116 22 88 ...
 ##  $ AVG   : num  25.2 17.7 10.3 8.8 7.2 6.2 4.4 3.6 3.1 2.8 ...</code></pre>
-<pre class="r"><code>names(dataset)</code></pre>
+<pre class="r"><code># Listing the name of each variable (columns)
+names(dataset)</code></pre>
 <pre><code>##  [1] &quot;No.&quot;    &quot;Player&quot; &quot;GP&quot;     &quot;GS&quot;     &quot;MIN&quot;    &quot;AVGMIN&quot; &quot;FG&quot;     &quot;FGA&quot;   
 ##  [9] &quot;FGPCT&quot;  &quot;X3FG&quot;   &quot;X3FGA&quot;  &quot;X3PCT&quot;  &quot;FT&quot;     &quot;FTA&quot;    &quot;FTPCT&quot;  &quot;OFFREB&quot;
 ## [17] &quot;DEFREB&quot; &quot;TOTREB&quot; &quot;AVGREB&quot; &quot;PF&quot;     &quot;DQ&quot;     &quot;A&quot;      &quot;A.G&quot;    &quot;TO&quot;    
 ## [25] &quot;TO.G&quot;   &quot;A.TO&quot;   &quot;BLK&quot;    &quot;BLK.G&quot;  &quot;STL&quot;    &quot;STL.G&quot;  &quot;PTS&quot;    &quot;AVG&quot;</code></pre>
-<pre class="r"><code>mean(dataset$FGPCT)</code></pre>
+<pre class="r"><code># Mean Team FG% Calculation
+mean(dataset$FGPCT)</code></pre>
 <pre><code>## [1] 39.08667</code></pre>
-<pre class="r"><code>min(dataset$A.TO)</code></pre>
+<pre class="r"><code># Minimum Team A/TO ratio
+min(dataset$A.TO)</code></pre>
 <pre><code>## [1] 0</code></pre>
-<pre class="r"><code>max(dataset$MIN)</code></pre>
+<pre class="r"><code># Maximum Number of Minutes Played for a single player
+max(dataset$MIN)</code></pre>
 <pre><code>## [1] 1130</code></pre>
-<pre class="r"><code>table(dataset$Player)</code></pre>
+<pre class="r"><code># Table list of Team Roster
+table(dataset$Player)</code></pre>
 <pre><code>## 
 ##    Adham Eleeda   Charles Pride    Chris Childs   Erickson Bans   Grant Coleman 
 ##               1               1               1               1               1 
@@ -742,7 +749,8 @@ head(dataset)</code></pre>
 ##               1               1               1               1               1 
 ##     Max Zakheim  Mike Iuzzolino      Peter Kiss   Timmy Kiggins Tyler Brelsford 
 ##               1               1               1               1               1</code></pre>
-<pre class="r"><code>is.na(dataset)</code></pre>
+<pre class="r"><code># Check to see if there are any null values in the dataset
+is.na(dataset)</code></pre>
 <pre><code>##         No. Player    GP    GS   MIN AVGMIN    FG   FGA FGPCT  X3FG X3FGA X3PCT
 ##  [1,] FALSE  FALSE FALSE FALSE FALSE  FALSE FALSE FALSE FALSE FALSE FALSE FALSE
 ##  [2,] FALSE  FALSE FALSE FALSE FALSE  FALSE FALSE FALSE FALSE FALSE FALSE FALSE
@@ -791,62 +799,36 @@ head(dataset)</code></pre>
 ## [13,] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
 ## [14,] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
 ## [15,] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</code></pre>
-<pre class="r"><code>colSums(is.na(dataset))</code></pre>
+<pre class="r"><code># Column summary of number of null values for each variable
+colSums(is.na(dataset))</code></pre>
 <pre><code>##    No. Player     GP     GS    MIN AVGMIN     FG    FGA  FGPCT   X3FG  X3FGA 
 ##      0      0      0      0      0      0      0      0      0      0      0 
 ##  X3PCT     FT    FTA  FTPCT OFFREB DEFREB TOTREB AVGREB     PF     DQ      A 
 ##      0      0      0      0      0      0      0      0      0      0      0 
 ##    A.G     TO   TO.G   A.TO    BLK  BLK.G    STL  STL.G    PTS    AVG 
 ##      0      0      0      0      0      0      0      0      0      0</code></pre>
-<pre class="r"><code>class(dataset$No.)</code></pre>
+<pre class="r"><code># Class type for &#39;No.&#39; variable (Player Number)
+class(dataset$No.)</code></pre>
 <pre><code>## [1] &quot;integer&quot;</code></pre>
-<pre class="r"><code>cor(dataset$MIN, dataset$PTS)</code></pre>
+<pre class="r"><code># Calculating correlation between minutes played and points scored
+cor(dataset$MIN, dataset$PTS)</code></pre>
 <pre><code>## [1] 0.8746304</code></pre>
-<pre class="r"><code>by(dataset$MIN, dataset$Player, FUN = mean)</code></pre>
-<pre><code>## dataset$Player: Adham Eleeda
-## [1] 1014
+<pre class="r"><code># Evaluate average number of minutes played based on disqualification count
+by(dataset$MIN, dataset$DQ, FUN = mean)</code></pre>
+<pre><code>## dataset$DQ: 0
+## [1] 217.1111
 ## ------------------------------------------------------------ 
-## dataset$Player: Charles Pride
-## [1] 1130
-## ------------------------------------------------------------ 
-## dataset$Player: Chris Childs
-## [1] 342
-## ------------------------------------------------------------ 
-## dataset$Player: Erickson Bans
+## dataset$DQ: 1
 ## [1] 353
 ## ------------------------------------------------------------ 
-## dataset$Player: Grant Coleman
-## [1] 64
+## dataset$DQ: 2
+## [1] 864.5
 ## ------------------------------------------------------------ 
-## dataset$Player: Greg Calixte
-## [1] 599
+## dataset$DQ: 3
+## [1] 924
 ## ------------------------------------------------------------ 
-## dataset$Player: Hall Elisias
-## [1] 566
-## ------------------------------------------------------------ 
-## dataset$Player: Joe Moon IV
-## [1] 30
-## ------------------------------------------------------------ 
-## dataset$Player: Josh Ozabor
-## [1] 70
-## ------------------------------------------------------------ 
-## dataset$Player: Luis Hurtado Jr
-## [1] 834
-## ------------------------------------------------------------ 
-## dataset$Player: Max Zakheim
-## [1] 12
-## ------------------------------------------------------------ 
-## dataset$Player: Mike Iuzzolino
-## [1] 23
-## ------------------------------------------------------------ 
-## dataset$Player: Peter Kiss
-## [1] 962
-## ------------------------------------------------------------ 
-## dataset$Player: Timmy Kiggins
-## [1] 13
-## ------------------------------------------------------------ 
-## dataset$Player: Tyler Brelsford
-## [1] 438</code></pre>
+## dataset$DQ: 6
+## [1] 566</code></pre>
 <pre class="r"><code># Efficiency variable creation to determine which players have a A/TO ratio less than 1.0
 dataset$EFF &lt;- ifelse(dataset$A.TO&lt;1.0,&quot;efficient&quot;,&quot;inefficient&quot;)
 table(dataset$EFF)</code></pre>

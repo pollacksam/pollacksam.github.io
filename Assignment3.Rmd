@@ -169,18 +169,41 @@ by(df3$Cases,df3$Month,median)
 ```{r}
 dataset <- read.csv('C:/Users/student/OneDrive - Bryant University/Desktop/Statistical_Analysis_with_R/Math421/Math421/21-22BballSeasonData.csv')
 
+# Quick preview of the 2021-22 Bryant Men's Basketball dataset
 head(dataset)
+
+# Labeling each variable type
 str(dataset)
+
+# Listing the name of each variable (columns)
 names(dataset)
+
+# Mean Team FG% Calculation
 mean(dataset$FGPCT)
+
+# Minimum Team A/TO ratio
 min(dataset$A.TO)
+
+# Maximum Number of Minutes Played for a single player
 max(dataset$MIN)
+
+# Table list of Team Roster
 table(dataset$Player)
+
+# Check to see if there are any null values in the dataset
 is.na(dataset)
+
+# Column summary of number of null values for each variable
 colSums(is.na(dataset))
+
+# Class type for 'No.' variable (Player Number)
 class(dataset$No.)
+
+# Calculating correlation between minutes played and points scored
 cor(dataset$MIN, dataset$PTS)
-by(dataset$MIN, dataset$Player, FUN = mean)
+
+# Evaluate average number of minutes played based on disqualification count
+by(dataset$MIN, dataset$DQ, FUN = mean)
 
 # Efficiency variable creation to determine which players have a A/TO ratio less than 1.0
 dataset$EFF <- ifelse(dataset$A.TO<1.0,"efficient","inefficient")
