@@ -1,0 +1,297 @@
+
+---
+output: # rmarkdown::github_document
+  html_document:
+  pdf_document: default
+  word_document: default
+title: "Assignment 4 - Data Wrangging with `dplyr`"
+---
+
+***How to do it?***: 
+
+- Open the Rmarkdown file of this assignment ([link](assignment4.Rmd)) in Rstudio. 
+
+- Right under each **question**, insert  a code chunk (you can use the hotkey `Ctrl + Alt + I` to add a code chunk) and code the solution for the question. 
+
+- Notice that if there is `eval=FALSE` in the first line of the code chunk, the chunk will not be execute.
+
+- `Knit` the rmarkdown file (hotkey: `Ctrl + Alt + K`) to export an html.  
+
+-  Publish the html file to your Githiub Page. 
+
+***Submission***: Submit the link on Github of the assignment to Canvas under Assignment 4. 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE)
+```
+
+-------
+
+#### 1. Install `tidyverse` package
+
+An R package can be installed by `install.packages` function. Install `tidyverse` if you have not done so. 
+
+```{r, eval=FALSE}
+install.packages('Rtools')
+install.packages('tidyverse')
+```
+
+-------
+
+#### 2. Read the data using `read.csv`
+
+Use `read.csv` function to import the US Covid 19 data at [link](https://covidtracking.com/data/download/all-states-history.csv).  Don't forget to import `tidyverse` (library(tidyverse)) so that you can use read_csv. 
+```{r}
+df <- read.csv('https://covidtracking.com/data/download/all-states-history.csv')
+```
+
+-------
+
+#### 3.  Fix the date and create some new variables
+
+`lubridate` is a package of the `tidyverse` packages.  We will make uses of `lubridate` in this question.
+
+- Use the below codes to create `month`, `weekday` and `monthday` variables
+
+```{r, eval=FALSE}
+library(lubridate)
+df$month = month(df$date)
+
+# day of the week
+df$weekday = wday(df$date)
+
+# day of the month
+df$monthday <- mday(df$date)
+```
+
+-------
+
+#### 4. Create new variables with `case_when`. 
+
+The function `case_when` is a good option to create a new variable from existing variable.  For example, this below codes create a new variable, `daily_death`, from `deathIncrease` variable.  `deathIncrease` is the number of daily new death by Covid19.  The new variable `daily_death` takes three values:  low (if `deathIncrease` less than 3), medium (`deathIncrease` from 3 to 14), and high (`deathIncrease` more than 14).  Please notice that this can also be done in a different way as shown in Assignment 3. 
+
+```{r}
+library(tidyverse)
+df$daily_death <- case_when(
+  df$deathIncrease <3 ~ 'low',
+  df$deathIncrease <=14 ~ 'medium',
+  TRUE ~ 'high'
+)
+```
+
+- Create variable `month2` that takes three values: early_month (day of the month from 1-10), mid_month (day of the month from 11-20), and end_month (day of the month > 20).
+```{r}
+df$month2 <- case_when(
+  df$monthday <=10 ~ 'early_month',
+  df$monthday <=20 ~ 'mid_month',
+  TRUE ~ 'end_month'
+)
+```
+
+- Create variable `weekend` that takes two values:  1 if it's Saturday or Sunday or 0 otherwise. 
+```{r}
+df$weekend <- case_when(
+  df$weekday <= 5 ~ 0,
+  TRUE ~ 1
+)
+```
+
+-------
+
+#### 5. Select function
+
+Use the select function to deselect the column `totalTestsViral` from the data.
+```{r}
+df %>% select(-totalTestsViral)
+```
+
+-------
+
+#### 6. Pipe Operator ( %>% )
+
+Pipe operator offers another way to write R codes. Many times, it makes the codes more readable.  Pipe works very well with all the `tidyverse` packages. Refer to [these slides](../slides/4_dplyr.html#15) (slide 15, 16, 17 and 18) to rewrite the below codes using pipe operator
+
+```{r, eval=FALSE}
+x <- c(1:10)
+
+# square root of x
+# sqrt(x)
+x %>% sqrt
+
+# sum(sqrt(x))
+x %>% sqrt %>% sum
+
+# log(sum(sqrt(x)))
+x %>% sqrt %>% sum %>% log
+
+# log base 2 of 16
+# log(16, 2)
+16 %>% log2
+```
+
+-------
+
+#### 7. Combo 1: group_by + summarise
+
+This combo is used when you want to apply a function/calculation to different groups of the data. For example, to calculate the average number of cases (`positiveIncrease`) by `dataQualityGrade`, we use:
+
+```{r}
+df %>% 
+  group_by(weekday) %>% 
+  summarise(mean(positiveIncrease))
+```
+
+- Calculate the median number of cases (`positiveIncrease`) by `month`
+```{r}
+df %>% 
+  group_by(month) %>% 
+  summarise(median(positiveIncrease))
+```
+
+- Calculate the average number of cases (`positiveIncrease`) by `month2`
+```{r}
+df %>% 
+  group_by(month2) %>% 
+  summarise(mean(positiveIncrease))
+```
+
+- Calculate the median number of cases (`positiveIncrease`) by `weekend`
+```{r}
+df %>% 
+  group_by(weekend) %>% 
+  summarise(median(positiveIncrease))
+```
+
+
+-------
+
+#### 8. Combo 2: filter + group_by + summarise
+
+An example: to calculate the average number of cases (`positiveIncrease`) in January and February separately, we use:
+
+```{r}
+df %>% 
+  filter(month==1|month==2) %>% 
+  group_by(month) %>% 
+  summarise(positive_increase = mean(positiveIncrease))
+```
+
+- Calculate the median number of cases (`positiveIncrease`) on the weekend by `month` in October and November 2020. 
+```{r}
+df %>% 
+  filter(month==10|month==11) %>% 
+  group_by(month) %>% 
+  summarise(positive_increase = median(positiveIncrease))
+```
+
+- Calculate the average number of death at different periods of a month (`month2` variable) in Fall 2020
+```{r}
+df %>% 
+  filter(month==9|month==10|month==11) %>% 
+  group_by(month2) %>% 
+  summarise(positive_increase = mean(positiveIncrease))
+```
+
+- Compare the average number of hospitalizations between weekdays and weekends in Summer 2020
+```{r}
+df %>% 
+  filter(month==6|month==7|month==8) %>% 
+  group_by(weekend) %>% 
+  summarise(hospitalizedIncrease = mean(hospitalizedIncrease))
+```
+
+- Redo Questions 14 and 15 in [Assignment 3](assignment3.html) using the combos.  Notice:  you also need to use the data used in Assignment 3.  
+```{r}
+q2 <- read.csv('https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv')
+
+q2$date <- as.Date(q2$date)
+q2$weekdays <- weekdays(q2$date)
+q2 %>% 
+  filter(state=='Rhode Island'|date>='2021-01-01'|date<'2022-01-01') %>% 
+  group_by(weekdays) %>% 
+  summarise(cases = median(cases))
+```
+
+-------
+
+#### 9. Combo 3: filter + group_by + summarise + arrange
+
+Use the arrange function to find a month that has the highest number of deaths on the weekend. 
+```{r}
+df %>% 
+  filter(weekend==1) %>% 
+  group_by(month) %>% 
+  summarise(max_deaths = max(deathIncrease)) %>% 
+  arrange(-max_deaths)
+```
+
+-------
+
+#### 10. Use your own dataset and implement the follows functions or combos. You can use the [Adult Census Income](../data/adult_census.csv) or [Titanic data](../data/titanic.csv). 
+
+- select
+- filter
+- mutate
+- summarise
+- arrange
+- count
+- count + arrange
+- filter + count + arrange
+- group_by + summarise
+- filter + group_by + summarise
+- filter + group_by + summarise + arrange
+```{r}
+adult_data <- read.csv('https://bryantstats.github.io/math421/data/adult_census.csv')
+
+# Selecting the age, education, and income variables
+adult_data %>% select(age, education, income)
+
+# Filtering data to show divorced adults who work 40 hours per week
+adult_data %>% filter(marital.status=='Divorced',hours.per.week==40)
+
+# Calculating an income column
+adult_data %>% mutate(income = capital.gain - capital.loss)
+
+# Summarise the mean, median, and max hours per week
+adult_data %>% summarise(mean_hours = mean(hours.per.week, na.rm = TRUE),
+                         median_hours = median(hours.per.week, na.rm = TRUE),
+                         max_hours = max(hours.per.week, na.rm = TRUE))
+
+# Arrange the age variable in descending order
+adult_data %>% 
+  arrange(-age)
+
+# Show count of education types
+adult_data %>% 
+  count(education)
+
+# Arrange count of education types in descending order
+adult_data %>% 
+  count(education) %>% 
+  arrange(-n)
+
+# Filter count of education types by only female adults and arrange in descending order
+adult_data %>% 
+  filter(sex=='Female') %>% 
+  count(education) %>% arrange(-n)
+
+# Group adults by relationship type and summarise each group's mean hours worked per week
+adult_data %>% 
+  group_by(relationship) %>% 
+  summarise(mean(hours.per.week))
+
+# Group adults with degrees higher than high school by education and summarise each group's mean hours worked per week
+table(adult_data$education)
+adult_data %>%   
+  filter(education=='Assoc-acdm'|education=='Assoc-voc'|education=='Bachelors'|education=='Doctorate'|education=='Masters'|education=='Prof_school') %>% 
+  group_by(education) %>% 
+  summarise(mean_hours_per_week = mean(hours.per.week))
+
+# Group adults with degrees higher than high school by education and summarise each group's mean hours worked per week in descending order
+adult_data %>%
+  filter(education=='Assoc-acdm'|education=='Assoc-voc'|education=='Bachelors'|education=='Doctorate'|education=='Masters'|education=='Prof_school') %>% 
+  group_by(education) %>% 
+  summarise(mean_hours_per_week = mean(hours.per.week)) %>%
+  arrange(-mean_hours_per_week)
+```
+
