@@ -244,7 +244,8 @@ df %>%
 - filter + group_by + summarise
 - filter + group_by + summarise + arrange
 ```{r}
-adult_data <- read.csv('https://bryantstats.github.io/math421/data/adult_census.csv')
+library(tidyverse)
+adult_data <- read_csv('https://bryantstats.github.io/math421/data/adult_census.csv')
 
 # Selecting the age, education, and income variables
 adult_data %>% select(age, education, income)
