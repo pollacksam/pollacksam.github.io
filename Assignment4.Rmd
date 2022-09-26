@@ -4,7 +4,7 @@ output: # rmarkdown::github_document
   html_document:
   pdf_document: default
   word_document: default
-title: "Assignment 4 - Data Wrangging with `dplyr`"
+title: "Assignment 4 - Data Wrangling with `dplyr`"
 ---
 
 ***How to do it?***: 
