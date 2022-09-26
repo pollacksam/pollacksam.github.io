@@ -42,7 +42,8 @@ install.packages('tidyverse')
 
 Use `read.csv` function to import the US Covid 19 data at [link](https://covidtracking.com/data/download/all-states-history.csv).  Don't forget to import `tidyverse` (library(tidyverse)) so that you can use read_csv. 
 ```{r}
-df <- read.csv('https://covidtracking.com/data/download/all-states-history.csv')
+library(tidyverse)
+df <- read_csv('https://covidtracking.com/data/download/all-states-history.csv')
 ```
 
 -------
@@ -53,7 +54,7 @@ df <- read.csv('https://covidtracking.com/data/download/all-states-history.csv')
 
 - Use the below codes to create `month`, `weekday` and `monthday` variables
 
-```{r, eval=FALSE}
+```{r}
 library(lubridate)
 df$month = month(df$date)
 
@@ -81,6 +82,7 @@ df$daily_death <- case_when(
 
 - Create variable `month2` that takes three values: early_month (day of the month from 1-10), mid_month (day of the month from 11-20), and end_month (day of the month > 20).
 ```{r}
+library(tidyverse)
 df$month2 <- case_when(
   df$monthday <=10 ~ 'early_month',
   df$monthday <=20 ~ 'mid_month',
@@ -90,6 +92,7 @@ df$month2 <- case_when(
 
 - Create variable `weekend` that takes two values:  1 if it's Saturday or Sunday or 0 otherwise. 
 ```{r}
+library(tidyverse)
 df$weekend <- case_when(
   df$weekday <= 5 ~ 0,
   TRUE ~ 1
@@ -111,7 +114,7 @@ df %>% select(-totalTestsViral)
 
 Pipe operator offers another way to write R codes. Many times, it makes the codes more readable.  Pipe works very well with all the `tidyverse` packages. Refer to [these slides](../slides/4_dplyr.html#15) (slide 15, 16, 17 and 18) to rewrite the below codes using pipe operator
 
-```{r, eval=FALSE}
+```{r}
 x <- c(1:10)
 
 # square root of x
