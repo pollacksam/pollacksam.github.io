@@ -78,12 +78,15 @@ aggr(df)
 ```{r}
 dfApproach1 <- drop_na(df)
 dfApproach1
+colSums(is.na(dfApproach1))
 ```
 
 7. Approach 2 to handle NAs:  Fill all the NAs with the previous or next value. (Hint: Using `fill` function).  Save the dataset after filling as a different data. The original data is unchanged (still have NAs). 
 ```{r}
 colSums(is.na(df))
 dfApproach2 <- df %>% fill(age, workclass, education, marital.status, occupation, relationship, sex, capital.gain, native.country, .direction = 'updown')
+
+colSums(is.na(dfApproach2))
 ```
 
 8. Approach 3 to handle NAs: For numeric variable, replace the NAs by the median.  For categorical variables, replace the NAs to the majority. 
@@ -112,8 +115,11 @@ df$sex <- replace_na(df$sex, majority_sex)
 median_capital.gain <- median(df$capital.gain, na.rm = TRUE)
 df$capital.gain <- replace_na(df$capital.gain, median_capital.gain)
 
-majority_native.country <- names(which.max(table(df$native.country)))
+majority_native.country <- names(which.max(table(df$native.country))) 
 df$native.country <- replace_na(df$native.country, majority_native.country)
+
+df
+colSums(is.na(df))
 ```
 
 
