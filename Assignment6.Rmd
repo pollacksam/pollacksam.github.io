@@ -1,0 +1,136 @@
+
+---
+output: 
+  html_document:
+  pdf_document: default
+  word_document: default
+title: "Assignment 6: Visualization - Aesthetic Mapping"
+---
+
+***How to do it?***: 
+
+- Open the Rmarkdown file of this assignment ([link](assignment6.Rmd)) in Rstudio. 
+
+- Right under each **question**, insert  a code chunk (you can use the hotkey `Ctrl + Alt + I` to add a code chunk) and code the solution for the question. 
+
+- `Knit` the rmarkdown file (hotkey: `Ctrl + Alt + K`) to export an html.  
+
+-  Publish the html file to your Githiub Page. 
+
+***Submission***: Submit the link on Github of the assignment to Canvas.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE)
+```
+
+-------
+
+### Questions on Your Selected Data
+
+Choose a dataset and produce the following types of plots and comment on each plot. Plots should be meaningful. If you use the data we used in class, make sure the plots are not the same as the ones in the slides. 
+```{r}
+library(tidyverse)
+df <- read_csv('C:/Users/student/OneDrive - Bryant University/Desktop/Statistical_Analysis_with_R/Math421/Math421/21-22BballSeasonData.csv')
+```
+
+-------
+
+1. For one continuous variable:
+
+- Density
+```{r}
+# Density chart for FG%
+library(tidyverse)
+df %>% ggplot()+
+  geom_density(mapping = aes(x = FGPCT))
+```
+
+- Histogram 
+```{r}
+# Histogram for FG%
+library(tidyverse)
+df %>% ggplot()+
+  geom_histogram(mapping = aes(x = FGPCT))
+```
+
+- Boxplot
+```{r}
+# Box plot for FG%
+library(tidyverse)
+df %>% ggplot()+
+  geom_boxplot(mapping = aes(x = FGPCT))
+```
+
+-------
+
+2. For one categorical variable
+
+- Barplot
+```{r}
+# Bar chart for Class Year
+library(tidyverse)
+df %>% ggplot()+
+  geom_bar(mapping = aes(x = Class))
+```
+
+-------
+
+3. For two continuous variables
+
+- Scatter Plot
+```{r}
+# Scatter plot displaying the relationship between minutes played and points scored
+df %>% ggplot()+geom_point(aes(x=MIN, y=PTS))
+```
+
+- Line Plot
+```{r}
+# Line plot displaying the relationship between minutes played and points scored
+df %>% ggplot()+geom_line(aes(x=MIN, y=PTS))
+```
+
+- Smooth Plot
+```{r}
+# Smooth plot displaying the relationship between minutes played and points scored
+df %>% ggplot()+geom_smooth(aes(x=MIN, y=PTS))
+```
+
+-------
+
+4. For one continuous + one categorical variables
+
+- Density
+```{r}
+# Density plot for FG% based on player position
+df %>% ggplot()+
+  geom_density(mapping = aes(x = FGPCT, color = Position))
+```
+
+- BoxPlot
+```{r}
+# Box plot for FG% based on player position
+df %>% ggplot()+
+  geom_boxplot(mapping = aes(x = FGPCT, y = Position))
+```
+
+-------
+
+5. For two categorical variables: barplot
+```{r}
+# Bar chart for class year based on position
+library(tidyverse)
+df %>% ggplot()+
+  geom_bar(mapping=aes(x=Class, fill=Position), position = 'fill')
+```
+
+
+-------
+
+6. A plot that contains three variables
+```{r}
+# Scatter plot displaying the relationship between average minutes played and points per game based on class year
+library(tidyverse)
+df %>% ggplot() + geom_point(aes(x=AVGMIN, y=AVG, color = Class))
+```
+
+
