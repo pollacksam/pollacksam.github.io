@@ -38,28 +38,52 @@ df <- read_csv('C:/Users/student/OneDrive - Bryant University/Desktop/Statistica
 
 df %>% ggplot()+
   geom_point(mapping=aes(x=AVGMIN, y=AVG))+
-  facet_wrap(~Position)
+  facet_wrap(~Position)+
+  labs(x='Minutes Per Game',
+       y='Points Per Game',
+       title='Relationship Between Minutes Per Game and Points 
+                       Per Game by Position',
+       caption='As minutes per game increases, points per game increases across both positions.')
 ```
 
 2. Make a plot using `facet_wrap` by two categorical variables (`facet_wrap(~variable1+variable2)`)
 ```{r}
 df %>% ggplot()+
   geom_point(mapping=aes(x=AVGMIN, y=AVG))+
-  facet_wrap(~Position+Class)
+  facet_wrap(~Position+Class)+
+  labs(x='Minutes Per Game',
+       y='Points Per Game',
+       title='Relationship Between Minutes Per Game and Points 
+          Per Game by Position and Class Year',
+       caption='As minutes per game increases, 
+       points per game increases across all class years for both positions.')
 ```
 
 3. Make a plot using `position ='dodge'`.
 ```{r}
 df %>% ggplot()+
   geom_bar(mapping=aes(x=Class, fill=Position),
-           position = 'dodge')
+           position = 'dodge')+
+  labs(x='Class Year',
+       y='Count',
+       title='Count of Players Across Each Class Year
+                        by Position',
+       caption='The majority of the team is made up of guards, 
+       with 11 of the 15 players being listed as guards.')
 ```
 
 4. Make a plot using `position ='fill'`. 
 ```{r}
 df %>% ggplot()+
   geom_bar(mapping=aes(x=Class, fill=Position),
-           position = 'fill')
+           position = 'fill')+
+  labs(x='Class Year',
+       y='Proportion',
+       title='Proportion of Player Position Across Each 
+                      Class Year',
+       caption='The majority of the team is made up of guards, 
+       with over 50% of each undergraduate year 
+       being listed as guards.')
 ```
 
 5. Make a plot using `geom_col`.
@@ -67,14 +91,25 @@ df %>% ggplot()+
 df %>% group_by(Class) %>% 
   summarise(average_A_TO=mean(A/TO, na.rm=TRUE)) %>% 
   ggplot()+ 
-  geom_col(mapping=aes(x=Class, y=average_A_TO))
+  geom_col(mapping=aes(x=Class, y=average_A_TO))+
+  labs(x='Class Year',
+       y='Average A/TO',
+       title='Average A/TO Ratio by Class Year',
+       caption='Freshmen and Junior players have the highest A/TO ratios,
+       whereas Sophomore and Graduate players have the lowest A/TO ratios.')
 ```
 
 6. Change the theme of one of your plots. 
 ```{r}
 df %>% ggplot()+ 
     geom_bar(mapping=aes(x=Class, fill=Position))+
-  theme_linedraw()
+  theme_linedraw()+
+  labs(x='Class Year',
+       y='Count',
+       title='Count of Players Across Each Class Year
+                        by Position',
+       caption='The majority of the team is made up of guards, 
+       with 11 of the 15 players being listed as guards.')
 ```
 
 7. Make a plot using combo filter + ggplot
@@ -82,7 +117,13 @@ df %>% ggplot()+
 df %>% 
   filter(GP>20) %>% 
   ggplot()+
-  geom_bar(mapping=aes(x=Class, fill=Position))
+  geom_bar(mapping=aes(x=Class, fill=Position))+
+  labs(x='Class Year',
+       y='Count',
+       title='Count of Players Who Have Played At Least 20 
+       Games Across Each Class Year by Position',
+       caption='The majority of the team is made up of guards, 
+       with 11 of the 15 players being listed as guards.')
 ```
 
 8. Make a plot using combo group_by + summarise + geom_col
@@ -91,7 +132,13 @@ df %>%
   group_by(Class, Position) %>% 
   summarise(mean_FGPCT = FGPCT) %>% 
   ggplot()+
-  geom_col(aes(x=Class, y=mean_FGPCT, fill=Position), position = 'dodge')
+  geom_col(aes(x=Class, y=mean_FGPCT, fill=Position), position = 'dodge')+
+  labs(x='Class Year',
+       y='Avg FG%',
+       title='Average FG% Across Each Class Year by Position',
+       caption='Forwards have better average FG%s than guards, 
+       with the older classes tending to have better
+       average FG% than younger classes.')
 ```
 
 9. Save a plot and put a link of the plot to your Github Webpage.  To link a plot `abc.png` you just need to insert the following on the README.md
@@ -121,7 +168,14 @@ df %>%
   ggplot()+
   geom_point(mapping = aes(x = date, 
                                     y = total_vaccinations,
-                                    color = vaccine))
+                                    color = vaccine))+
+  labs(x='Date',
+       y='Total Vaccinations',
+       title='Vaccination Count in the U.S. 
+  Over Time by Vaccine Type',
+       caption='Pfizer and Moderna grew in popularity very
+       rapidly throughout 2021-22, while J&J stayed 
+  relatively stagnant.')
 ```
 
 Do the follows. 
@@ -132,7 +186,15 @@ df %>%
   filter(location=='Argentina', date>="2022-01-01", date<"2023-01-01") %>% 
   ggplot()+
   geom_point(mapping = aes(x = date, 
-                                    y = total_vaccinations,                                     color = vaccine))
+                                    y = total_vaccinations,                                     color = vaccine))+
+  labs(x='Date',
+       y='Total Vaccinations',
+       title='Vaccination Count in Argentina 
+    in 2022 by Vaccine Type',
+       caption='Cansino, Sputnik V, Oxford/AstraZeneca, and 
+       Sinopharm/Beijing stayed relatively stagnant in 
+       growth over 2022, while Pfizer/BioNTech and
+       Moderna saw strong growth throughout the year.')
 ```
   
   - Change `geom_point` to `geom_line` in the above codes to have the corresponding line plots. 
@@ -141,7 +203,15 @@ df %>%
   filter(location=='Argentina', date>="2022-01-01", date<"2023-01-01") %>% 
   ggplot()+
   geom_line(mapping = aes(x = date, 
-                                    y = total_vaccinations,                                     color = vaccine))
+                                    y = total_vaccinations,                                     color = vaccine))+
+  labs(x='Date',
+       y='Total Vaccinations',
+       title='Vaccination Count in Argentina 
+    in 2022 by Vaccine Type',
+       caption='Cansino, Sputnik V, Oxford/AstraZeneca, and 
+       Sinopharm/Beijing stayed relatively stagnant in 
+       growth over 2022, while Pfizer/BioNTech and
+       Moderna saw strong growth throughout the year.')
 ```
 
 11. (Using the same dataset as in 10.) Sometimes we need to do some calculations on the data before plotting. For example, the below codes is to compare the total vaccines (including all types of vaccines) by date between the US and the EU
@@ -158,7 +228,14 @@ d1 %>%
   ggplot()+
   geom_point(mapping=aes(x=date, 
                          y=total_vac2, 
-                         color=location))
+                         color=location))+
+  labs(x='Date',
+       y='Total Vaccinations',
+       title='Vaccination Count Over Time 
+Between the E.U. and the U.S.',
+       caption='The U.S. used up more vaccines up until
+June 2021, where the E.U. began using more 
+vaccines moving forward.')
 ```
 
 Notice that the above codes could be piped in one 
@@ -171,7 +248,14 @@ df %>%
   ggplot()+
   geom_point(mapping=aes(x=date, 
                          y=total_vac2, 
-                         color=location))
+                         color=location))+
+  labs(x='Date',
+       y='Total Vaccinations',
+       title='Vaccination Count Over Time 
+Between the E.U. and the U.S.',
+       caption='The U.S. used up more vaccines up until
+June 2021, where the E.U. began using more 
+vaccines moving forward.')
 ```
 
 
@@ -186,7 +270,14 @@ df %>%
   ggplot()+
   geom_point(mapping=aes(x=date, 
                          y=total_vac2, 
-                         color=location))
+                         color=location))+
+  labs(x='Date',
+       y='Total Vaccinations',
+       title='Vaccination Count Over Time 
+Between Asian Countries/Regions',
+       caption='Japan saw the greatest growth in vaccine
+use over time, with every other nation/region other
+than South Korea staying relatively stagnant.')
 ```
 - Use `geom_point` to compare the total vaccines (including all types of vaccines) by date between countries/regions in South America in 2021
 ```{r}
@@ -198,6 +289,13 @@ df %>%
   ggplot()+
   geom_point(mapping=aes(x=date, 
                          y=total_vac2, 
-                         color=location))
+                         color=location))+
+  labs(x='Date',
+       y='Total Vaccinations',
+       title='Vaccination Count in 2021 Between
+       South American Countries',
+       caption='Argentina and Peru saw relatively consistent
+       growth in vaccine use, whereas Chile and
+       Ecuador leveled off toward the end of 2021.')
 ```
 
