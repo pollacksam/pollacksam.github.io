@@ -14,4 +14,6 @@
 
 [Assignment 7](Assignment7.html)
 
+[Assignment 8](Assignment8.html)
+
 [Link to the plot](PlayersWithHighGP.png)
