@@ -1,0 +1,127 @@
+
+---
+output: 
+  html_document:
+  pdf_document: default
+  word_document: default
+title: "Assignment 9: Visualization - Revealing a graph"
+---
+
+***How to do it?***: 
+
+- Open the Rmarkdown file of this assignment ([link](assignment9.Rmd)) in Rstudio. 
+
+- Right under each **question**, insert  a code chunk (you can use the hotkey `Ctrl + Alt + I` to add a code chunk) and code the solution for the question. 
+
+- `Knit` the rmarkdown file (hotkey: `Ctrl + Alt + K`) to export an html.  
+
+-  Publish the html file to your Githiub Page. 
+
+***Submission***: Submit the link on Github of the assignment to Canvas
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE)
+```
+
+
+-------
+
+**Notice:** *In this assignment, all the plot should have title, caption, and axis labels. *
+
+1. Use the COVID-19 dataset by WHO at https://covid19.who.int/WHO-COVID-19-global-data.csv. Find the three countries with the most numbers of deaths by Covid-19. 
+
+Hint: 
+
+-  Use `filter` to select the most current date 
+
+-  Pipe with `arrange(-Cumulative_deaths)` to rank the data by the number of cumulative deaths
+```{r}
+library(tidyverse)
+library(dplyr)
+
+df <- read_csv('https://covid19.who.int/WHO-COVID-19-global-data.csv')
+
+results <- df %>% filter(Date_reported==max(Date_reported)) %>% arrange(-Cumulative_deaths) %>% top_n(3, Cumulative_deaths)
+results
+```
+2. Use `transition_reveal` to make a plot revealing the number of deaths in the three countries with the most numbers of deaths
+```{r}
+library(gganimate)
+library(ggplot2)
+library(tidyverse)
+
+df %>%
+  filter(Country %in% c('United States of America','Brazil','India')) %>% 
+  ggplot(aes(y=Cumulative_deaths,
+            x=Date_reported,
+            color=Country))+ 
+  geom_line()+
+  geom_point(size=3)+
+  geom_text(aes(label = Cumulative_deaths), 
+            hjust = -.1, size=5) +
+  transition_reveal(Date_reported) +
+  labs(x='Date',
+       y='Total Deaths',
+       color = 'Country',
+       title = 'Total Deaths for Top 3 Countries',
+       caption = 'Total Deaths in the United States grows at
+       a faster rate than Brazil and India, while
+       Brazil and India grow at similar rates.')
+```
+
+3. Create the new variable (column) `death_per_cases` recording the number of deaths per cases (Hint: divide cumulative deaths by cumulative cases).  What are the three countries with the highest deaths per cases? 
+```{r}
+df$death_per_cases <- df$Cumulative_deaths/df$Cumulative_cases
+
+df %>% filter(Date_reported==max(Date_reported)) %>% arrange(-death_per_cases) %>% top_n(3, death_per_cases)
+```
+
+4.Use `transition_reveal` to make a plot revealing the number of deaths per cases of the US, Italy and Mexico. 
+```{r}
+library(gganimate)
+library(ggplot2)
+library(tidyverse)
+
+df %>%
+  filter(Country %in% c('United States of America','Italy','Mexico')) %>% 
+  ggplot(aes(y=death_per_cases,
+            x=Date_reported,
+            color=Country))+ 
+  geom_line()+
+  geom_point(size=3)+
+  geom_text(aes(label = death_per_cases), 
+            hjust = -.1, size=5) +
+  transition_reveal(Date_reported) +
+  labs(x='Date',
+       y='Deaths Per Cases',
+       color = 'Country',
+       title = 'Deaths Per Cases for US, Italy, & Mexico',
+       caption = 'Mexico spikes the most of the three countries.
+       Italy spikes to a similar point as Mexico, but
+       then follows a similar downtrend to the US.')
+```
+
+5. Import the following data https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/vaccinations.csv
+                      
+Use `transition_reveal` to plot the total vaccinations per hundred by level of income. Hint: the levels of income are identified in the `location` variable. Put a short comment on the caption of the plot. 
+```{r}
+df <- read_csv('https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/vaccinations.csv')
+
+df %>%
+  filter(location %in% c('Low income','Lower middle income','Upper middle income','High income')) %>% 
+  ggplot(aes(y=total_vaccinations_per_hundred,
+            x=date,
+            color=location))+ 
+  geom_line()+
+  geom_point(size=3)+
+  geom_text(aes(label = total_vaccinations_per_hundred), 
+            hjust = -.1, size=5) +
+  transition_reveal(date) +
+  labs(x='Date',
+       y='Total Vaccinations Per Hundred',
+       color = 'Level of Income',
+       title = 'Total Vaccinations Per Hundred By Level of Income',
+       caption = 'Upper Middle and High Incomes have the total 
+       vaccinations, followed by Lower Middle and Low.')
+```
+
