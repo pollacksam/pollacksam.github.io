@@ -1,0 +1,100 @@
+
+---
+output: 
+  html_document:
+  pdf_document: default
+  word_document: default
+title: "Assignment 11: Predictive Modeling - Universal Framework"
+---
+
+***How to do it?***: 
+
+- Open the Rmarkdown file of this assignment ([link](assignment11.Rmd)) in Rstudio. 
+
+- Right under each **question**, insert  a code chunk (you can use the hotkey `Ctrl + Alt + I` to add a code chunk) and code the solution for the question. 
+
+- `Knit` the rmarkdown file (hotkey: `Ctrl + Alt + K`) to export an html.  
+
+-  Publish the html file to your Githiub Page. 
+
+***Submission***: Submit the link on Github of the assignment to Blackboard.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+```
+
+
+-------
+
+1. Install the package mlbench and use the follows to import the data
+
+```{r}
+library(mlbench)
+library(tidyverse)
+data(PimaIndiansDiabetes)
+df <- tibble(PimaIndiansDiabetes)
+```
+
+Train and Test a decision tree and a random forest with caret. Plot the variable importance of these models. 
+```{r}
+library(caret)
+df <- df %>% rename(target=diabetes)
+df <- df %>% 
+  mutate(target = as.factor(target))
+splitIndex <- createDataPartition(df$target, p = .70, 
+                                  list = FALSE)
+df_train <- df[ splitIndex,]
+df_test <- df[-splitIndex,]
+model <- train(target ~ ., data=df_train, 
+                method = "rpart2",
+                maxdepth=3)
+pred <- predict(model, df_test)
+cm <- confusionMatrix(data = pred, reference = df_test$target)
+cm$overall[1]
+
+modelF <- train(target~., data=df_train, 
+                method = "rf",
+                ntree = 1000) 
+predF <- predict(modelF, df_test)
+cmF <- confusionMatrix(data = predF, reference = df_test$target)
+cmF$overall[1]
+
+varImp(model)
+varImp(modelF)
+plot(varImp(model))
+plot(varImp(modelF))
+```
+
+2. Train and Test a `glmnet` model. Plot the variable importance of the model. 
+```{r}
+library(glmnet)
+model2 <- train(target ~ ., data=df_train, 
+                method = "glmnet")
+pred2 <- predict(model2, df_test)
+cm2 <- confusionMatrix(data = pred2, reference = df_test$target)
+cm2$overall[1]
+
+varImp(model2)
+plot(varImp(model2))
+```
+
+3. Train and test two models that are not `ranger`, `glmnet` or `rpart`  with caret. If possible, plot the variable importance of the model.
+```{r}
+library(arm)
+model3 <- train(target ~ ., data=df_train, 
+                method = "bayesglm")
+pred3 <- predict(model3, df_test)
+cm3 <- confusionMatrix(data = pred3, reference = df_test$target)
+cm3$overall[1]
+
+library(rpart)
+model4 <- train(target ~ ., data=df_train, 
+                method = "rpart1SE")
+pred4 <- predict(model4, df_test)
+cm4 <- confusionMatrix(data = pred4, reference = df_test$target)
+cm4$overall[1]
+
+varImp(model4)
+plot(varImp(model4))
+```
+
