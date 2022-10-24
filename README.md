@@ -12,3 +12,4 @@
 |[Assignment 7](Assignment7.html)|[Link to the plot](PlayersWithHighGP.png)|
 |[Assignment 8](Assignment8.html)||
 |[Assignment 9](Assignment9.html)||
+|[Assignment 10](Assignment10.html)||
