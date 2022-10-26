@@ -1,0 +1,100 @@
+
+---
+output: 
+  html_document:
+  pdf_document: default
+  word_document: default
+title: "Assignment 12: Predictive Modeling - Part 3"
+---
+
+***How to do it?***: 
+
+- Open the Rmarkdown file of this assignment ([link](assignment12.Rmd)) in Rstudio. 
+
+- Right under each **question**, insert  a code chunk (you can use the hotkey `Ctrl + Alt + I` to add a code chunk) and code the solution for the question. 
+
+- `Knit` the rmarkdown file (hotkey: `Ctrl + Alt + K`) to export an html.  
+
+-  Publish the html file to your Githiub Page. 
+
+***Submission***: Submit the link on Github of the assignment to Blackboard.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE)
+```
+
+
+1. Use the `PimaIndiansDiabetes` dataset. Use 15% data for testing. Use cross-validation with 7 folds to tune random forest `(method='ranger')`.  What are the parameters that produce the greatest accuracy? What is the testing accuracy. 
+```{r}
+library(mlbench)
+library(tidyverse)
+library(caret)
+data(PimaIndiansDiabetes)
+df <- tibble(PimaIndiansDiabetes)
+
+df = drop_na(df)
+df <- df %>% rename(target=diabetes)
+df <- df %>% 
+  mutate(target = as.factor(target))
+splitIndex <- createDataPartition(df$target, p = .85, 
+                                  list = FALSE)
+df_train <- df[ splitIndex,]
+df_test <- df[-splitIndex,]
+
+trControl = trainControl(method = "cv",
+                         number = 7)
+
+tuneGrid = expand.grid(mtry = 2:4,
+                       splitrule = c('gini', 'extratrees'),
+                       min.node.size = c(1:10))
+
+forest_ranger <- train(target~., data=df_train, 
+                    method = "ranger", 
+                    trControl = trControl,
+                    tuneGrid = tuneGrid)
+
+# Plot the results
+plot(forest_ranger)
+
+# Print the results
+print(forest_ranger)
+
+pred <- predict(forest_ranger, df_test)
+cm <- confusionMatrix(data = pred, reference = df_test$target, positive = "pos")
+cm$overall[1]
+```
+
+2. Use the `PimaIndiansDiabetes` dataset. Go to https://topepo.github.io/caret/available-models.html and pick a classification model.  Tune the classification model using cross-validation of 7 folds. 
+```{r}
+library(tidyverse)
+
+splitIndex <- createDataPartition(df$target, p = .85, 
+                                  list = FALSE)
+df_train <- df[ splitIndex,]
+df_test <- df[-splitIndex,]
+
+model2 <- train(target ~ ., data=df_train,
+                method = "treebag",
+                maxdepth = 7)
+pred <- predict(model2, df_test)
+cm <- confusionMatrix(data = pred, reference = df_test$target)
+cm$overall[1]
+```
+
+3. (Model Comparison) Use the `PimaIndiansDiabetes` dataset. Pick two models at [this link](https://topepo.github.io/caret/available-models.html) to compare using 7-fold cross validation method. Evaluate the accuracy of the final model on the test data. 
+```{r}
+firstModel <- train(target~., data=df_train, 
+                method = "glmnet",
+                maxdepth=7)
+predFirst <- predict(firstModel, df_test)
+cmFirst <- confusionMatrix(data = predFirst, reference = df_test$target)
+cmFirst$overall[1]
+
+secondModel <- train(target~., data=df_train, 
+                method = "rpart1SE",
+                maxdepth=7)
+predSecond <- predict(secondModel, df_test)
+cmSecond <- confusionMatrix(data = predSecond, reference = df_test$target)
+cmSecond$overall[1]
+```
+
