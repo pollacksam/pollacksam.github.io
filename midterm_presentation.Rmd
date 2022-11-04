@@ -1,0 +1,695 @@
+---
+title: "![](C:/Users/student/OneDrive - Bryant University/Desktop/Statistical_Analysis_with_R/Math421/Math421/bat_cartoon.png) Midterm Presentation"
+author: <font size="5"> Sam Pollack </font>
+output:
+  xaringan::moon_reader:
+    css: [default, metropolis, metropolis-fonts]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      slideNumberFormat: |
+        <div class="progress-bar-container">
+          <div class="progress-bar" style="width: calc(%current% / %total% * 100%);">
+          </div>
+        </div>`
+---
+
+<style>
+
+.remark-slide-content {
+  background-color: #FFFFFF;
+  border-top: 80px solid #F9C389;
+  font-size: 17px;
+  font-weight: 300;
+  line-height: 1.5;
+  padding: 1em 2em 1em 2em
+}
+
+.inverse {
+  background-color: #696767;
+  border-top: 80px solid #696767;
+  text-shadow: none;
+  background-image: url(https://github.com/goodekat/presentations/blob/master/2019-isugg-gganimate-spooky/figures/spider.png?raw=true);
+	background-position: 50% 75%;
+  background-size: 150px;
+}
+
+.your-turn{
+  background-color: #8C7E95;
+  border-top: 80px solid #F9C389;
+  text-shadow: none;
+  background-image: url(https://github.com/goodekat/presentations/blob/master/2019-isugg-gganimate-spooky/figures/spider.png?raw=true);
+	background-position: 95% 90%;
+  background-size: 75px;
+}
+
+.title-slide {
+  background-color: #F9C389;
+  border-top: 80px solid #F9C389;
+  background-image: none;
+}
+
+.title-slide > h1  {
+  color: #111111;
+  font-size: 40px;
+  text-shadow: none;
+  font-weight: 400;
+  text-align: left;
+  margin-left: 15px;
+  padding-top: 80px;
+}
+.title-slide > h2  {
+  margin-top: -25px;
+  padding-bottom: -20px;
+  color: #111111;
+  text-shadow: none;
+  font-weight: 300;
+  font-size: 35px;
+  text-align: left;
+  margin-left: 15px;
+}
+.title-slide > h3  {
+  color: #111111;
+  text-shadow: none;
+  font-weight: 300;
+  font-size: 25px;
+  text-align: left;
+  margin-left: 15px;
+  margin-bottom: -30px;
+}
+
+</style>
+
+```{css, echo=FALSE}
+.left-code {
+  color: #777;
+  width: 48%;
+  height: 92%;
+  float: left;
+}
+.right-plot {
+  width: 51%;
+  float: right;
+  padding-left: 1%;
+}
+```
+
+```{r setup, include = FALSE}
+
+# R markdown options
+knitr::opts_chunk$set(echo = TRUE, 
+                      
+                      fig.width = 10,
+                      fig.height = 5,
+                      fig.align = "center", 
+                      message = FALSE,
+                      warning = FALSE)
+
+# Load packages
+library(tidyverse)
+library(knitr)
+library(ggplot2)
+library(gganimate)
+library(gifski)
+library(dplyr)
+library(lubridate)
+library(haven)
+```
+
+# Setting Up The Data
+
+```{r}
+df <- read_csv('C:/Users/student/OneDrive - Bryant University/Desktop/Statistical_Analysis_with_R/Math421/Math421/PollackSamMidterm.csv')
+
+#Removing Columns
+df <- df %>% select(-payfix, -raceethn, -admtype, 
+                    -asource, -preopday, -bwght, 
+                    -ecodub92, -pt_state, -diag_adm, 
+                    -er_mode, -obs_hour, -nicu_day)
+```
+---
+# Plot 1
+
+```{r}
+plot1 <- df %>% ggplot()+
+  geom_bar(mapping = aes(x = moa))+
+  labs(x='Month of Admission',
+       y='count',
+       title='Count of Patient Month of Admission',
+       caption='A bar chart that indicates that October had
+       the most patients admitted of any month.')
+
+plot(plot1)
+```
+---
+# Plot 2
+
+```{r}
+df$sex <- case_when(
+    df$sex==1 ~ 'Male',
+    df$sex==2 ~ 'Female',
+    TRUE ~ 'Unknown'
+  )
+
+plot2 <- df %>% 
+  ggplot()+ 
+  geom_point(aes(x=age, y=tot, color = sex))+
+  labs(x='Age',
+       y='Total Charge',
+       title='Total Charge Rates by Age Based on Sex',
+       caption='A scatter plot displaying the relationship between 
+       patient age and total charge rates based on sex.')
+```
+---
+# Plot 2
+
+```{r}
+plot(plot2)
+```
+---
+# Plot 3
+
+```{r}
+plot3 <- df %>% 
+  ggplot()+
+  geom_bar(mapping=aes(x=moa, fill=sex), position = 'fill')+
+  labs(x='Month of Admission',
+       y='Proportion',
+       title='Month of Admission Proportions Based on Sex',
+       caption='A bar chart displaying the proportions 
+       of month of admission for each sex.')
+
+plot(plot3)
+```
+---
+# Plot 4
+
+```{r}
+plot4 <- df %>% 
+  ggplot()+
+  geom_boxplot(mapping = aes(x = age, y = sex))+
+  labs(x='Age',
+       y='Sex',
+       title='Age Distributions Based on Sex',
+       caption='A box plot displaying summary 
+       statistics for patient age for each sex.')
+
+plot(plot4)
+```
+---
+# Plot 5
+
+```{r}
+plot5 <- df %>% 
+  ggplot()+
+  geom_point(mapping = aes(x = los, y = tot))+
+  facet_wrap(~sex)+
+  labs(x='Length of Stay',
+       y='Total Charge',
+       title='Relationship Between Length of Stay Total Charge Rates by Sex',
+       caption='Both sexes follow a positive relationship 
+       between length of stay and total charge.')
+```
+---
+# Plot 5
+
+```{r}
+plot(plot5)
+```
+---
+# Plot 6
+
+```{r}
+plot6 <- df %>% 
+  filter(age>65) %>% 
+  ggplot()+ 
+  geom_point(aes(x=age, y=tot, color = sex))+
+  labs(x='Age',
+       y='Total Charge',
+       title='Total Charge Rates for Retired Patients
+       by Age Based on Sex',
+       caption='A scatter plot displaying the relationship between patient 
+       age and total charge rates for retired patients based on sex.')
+```
+---
+# Plot 6
+
+```{r}
+plot(plot6)
+```
+---
+# Plot 7
+
+```{r}
+plot7 <- df %>% 
+  ggplot()+
+  geom_bar(mapping=aes(x=sex, fill=sex), position = 'dodge')+
+  facet_wrap(~provider)+
+  labs(x='Sex',
+       y='Count',
+       title='Count of Patient Sex at Each Provider',
+       caption='A series of bar charts displaying the
+       counts of patient sex across each provider.')
+```
+---
+# Plot 7
+
+```{r}
+plot(plot7)
+```
+---
+# Categorizing Provider
+
+```{r}
+df$provider <- case_when(
+  df$provider == 7201 ~ 'Newport',
+  df$provider == 7202 ~ 'St. Joseph Health Services of RI',
+  df$provider == 7203 ~ 'Memorial',
+  df$provider == 7204 ~ 'Miriam',
+  df$provider == 7205 ~ 'Rhode Island Hospital',
+  df$provider == 7206 ~ 'Roger Williams',
+  df$provider == 7209 ~ 'South County',
+  df$provider == 7210 ~ 'Kent County',
+  df$provider == 7211 ~ 'Westerly',
+  df$provider == 7212 ~ 'Rehab of RI',
+  df$provider == 7213 ~ 'Landmark Medical Center',
+  df$provider == 7214 ~ 'Women and Infants',
+  df$provider == 7215 ~ 'Bradley',
+  TRUE ~ 'Butler'
+)
+```
+---
+# Plot 8
+
+```{r}
+plot8 <- df %>% 
+  ggplot()+
+  geom_boxplot(mapping = aes(x = age, y = provider))+
+  labs(x='Age',
+       y='Provider',
+       title='Age Distributions Based on Provider',
+       caption='A box plot displaying summary 
+       statistics for patient age for each provider.')
+
+plot(plot8)
+```
+---
+# Plot 9
+
+```{r}
+plot9 <- df %>% 
+  filter(provider=='Bradley'|
+         provider=='Butler'|
+         provider=='Rhode Island Hospital'
+         ) %>% 
+  ggplot()+ 
+  geom_point(aes(x=age, y=tot, color = provider))+
+  labs(x='Age',
+       y='Total Charge',
+       title='Total Charge Rates by Age For Male-Majority Provider',
+       caption='A scatter plot displaying the relationship between 
+       patient age and total charge rates based on provider.')
+```
+---
+# Plot 9
+
+```{r}
+plot(plot9)
+```
+
+---
+# Plot 10
+
+```{r}
+plot10 <- df %>% 
+  filter(
+    provider=='Kent County'|
+    provider=='Landmark Medical Center'|
+    provider=='Miriam'|
+    provider=='Newport'|
+    provider=='Roger Williams'|
+    provider=='South County'|
+    provider=='St. Joseph Health Services of RI'|
+    provider=='Westerly'|
+    provider=='Women and Infants'
+         ) %>% 
+  ggplot()+ 
+  geom_point(aes(x=age, y=tot, color = provider))+
+  labs(x='Age',
+       y='Total Charge',
+       title='Total Charge Rates by Age For Female-Majority Provider',
+       caption='A scatter plot displaying the relationship between 
+       patient age and total charge rates based on provider.')
+```
+---
+# Plot 10
+
+```{r}
+plot(plot10)
+```
+---
+# Animated Plot
+
+```{r}
+library(gganimate)
+library(gifski)
+library(ggplot2)
+library(tidyverse)
+library(knitr)
+library(lubridate)
+
+d1 <- df %>% group_by(moa, provider) %>% summarise(mean = mean(tot))
+d2 <- d1 %>% group_by(moa) %>% mutate(rank=rank(-mean)) 
+d3 <- d2 %>% filter(rank <= 10)
+a1 <- d3 %>% ggplot(aes(x=rank, y=mean, group=provider, fill=provider, label=provider)) + geom_col()+
+    geom_text(aes(y = mean, label = provider), hjust = 1.4)+ 
+    coord_flip(clip = "off", expand = FALSE) +scale_x_reverse()+
+    labs(title = 'Month {closest_state}', x='', y='Total Charge', fill='Provider')+
+    theme(plot.title = element_text(hjust = 1, size = 22),
+          axis.ticks.y = element_blank(),
+          axis.text.y  = element_blank()) + 
+    transition_states(moa)+
+    ease_aes("cubic-in-out")
+```
+---
+# Animated Plot
+
+```{r}
+animate(a1, nframes = 400)
+```
+---
+# Setting Up Data for Modeling
+
+```{r}
+df <- read_csv('C:/Users/student/OneDrive - Bryant University/Desktop/Statistical_Analysis_with_R/Math421/Math421/PollackSamMidterm.csv')
+
+df$target <- case_when(
+  df$tot <= median(df$tot) ~ 'low',
+  TRUE ~ 'high'
+)
+
+df$sex <- case_when(
+    df$sex==1 ~ 'Male',
+    df$sex==2 ~ 'Female',
+    TRUE ~ 'Unknown'
+  )
+
+df$provider <- case_when(
+  df$provider == 7201 ~ 'Newport',
+  df$provider == 7202 ~ 'St. Joseph Health Services of RI',
+  df$provider == 7203 ~ 'Memorial',
+  df$provider == 7204 ~ 'Miriam',
+  df$provider == 7205 ~ 'Rhode Island Hospital',
+  df$provider == 7206 ~ 'Roger Williams',
+  df$provider == 7209 ~ 'South County',
+  df$provider == 7210 ~ 'Kent County',
+  df$provider == 7211 ~ 'Westerly',
+  df$provider == 7212 ~ 'Rehab of RI',
+  df$provider == 7213 ~ 'Landmark Medical Center',
+  df$provider == 7214 ~ 'Women and Infants',
+  df$provider == 7215 ~ 'Bradley',
+  TRUE ~ 'Butler'
+)
+```
+---
+# Setting Up Data for Modeling
+
+```{r}
+df$raceethn <- case_when(
+  df$raceethn == 1 ~ 'White, not Hispanic',
+  df$raceethn == 2 ~ 'Black, not Hispanic',
+  df$raceethn == 3 ~ 'Asian, not Hispanic',
+  df$raceethn == 4 ~ 'American Indian, not Hispanic',
+  df$raceethn == 5 ~ 'Native American, not Hispanic',
+  df$raceethn == 6 ~ 'Other, not Hispanic',
+  df$raceethn == 7 ~ 'Hispanic, all races',
+  df$raceethn == 9 ~ 'Unknown Race/ethnicity',
+  TRUE ~ 'Missing/Unknown'
+)
+
+df$admtype <- case_when(
+  df$admtype == 1 ~ 'Emergency',
+  df$admtype == 2 ~ 'Urgent',
+  df$admtype == 3 ~ 'Electric',
+  df$admtype == 4 ~ 'Newborn',
+  df$admtype == 5 ~ 'Court Committal (before 1/1/2005)',
+  df$admtype == 6 ~ 'Trauma (as of 1/1/2005)',
+  TRUE ~ 'Information Not Available'
+)
+```
+---
+# Setting Up Data for Modeling
+
+```{r}
+df$campus <- case_when(
+  df$campus == 0 ~ 'Hospital Has Only One Premise',
+  df$campus == 1 ~ 'St. Joseph Health Services of Rhode Island - Our Lady of Fatima Hospital',
+  df$campus == 2 ~ 'St. Joseph Health Services of Rhode Island - St. Joseph Hospital for Specialty Care',
+  df$campus == 3 ~ 'Rhode Island Hospital - Adult',
+  TRUE ~ 'Rhode Island Hospital - Hasbro'
+)
+
+new_df <- df %>% select("target", "age", "sex", "raceethn", "provider", "moa", "mod", "admtype", "campus", "los")
+```
+
+
+```{r, include=FALSE}
+library(tidyverse)
+library(caret)
+
+new_df <- new_df %>% 
+  filter(raceethn!='',admtype!='') %>% 
+  mutate(target=as.factor(target),
+         age=age,
+         sex=as.factor(sex),
+         raceethn=as.factor(raceethn),
+         provider=as.factor(provider),
+         moa=moa,
+         mod=mod,
+         admtype=as.factor(admtype),
+         campus=as.factor(campus),
+         los=los)
+
+set.seed(2020)
+splitIndex <- createDataPartition(new_df$target, p = .1,
+                                  list = FALSE)
+
+df_train <- new_df[ splitIndex,]
+df_test <- new_df[-splitIndex,]
+
+library(rpart)
+library(rattle)
+
+tree_model <- rpart(target ~ ., data = df_train,
+                    control = rpart.control(maxdepth = 3))
+pred <- predict(tree_model, df_test, type = "class")
+cm <- confusionMatrix(data = pred, reference = df_test$target, positive = "low")
+
+library(mlbench)
+library(tidyverse)
+library(caret)
+
+trControl = trainControl(method = "cv",
+                         number = 5)
+
+tuneGrid = expand.grid(mtry = 2:4,
+                       splitrule = c('gini', 'extratrees'),
+                       min.node.size = c(1:10))
+
+#Model 1
+model1 <- train(target ~ ., data=df_train,
+                method = "treebag",
+                trControl = trControl,
+                maxdepth = 5)
+
+pred1 <- predict(model1, df_test)
+cm1 <- confusionMatrix(data = pred1, reference = df_test$target)
+
+#Model 2
+model2 <- train(target ~ ., data=df_train,
+                method = "rpart2",
+                trControl = trControl,
+                maxdepth = 5)
+
+pred2 <- predict(model2, df_test)
+cm2 <- confusionMatrix(data = pred2, reference = df_test$target)
+
+#Results
+forest_ranger <- train(target~., data=df_train, 
+                    method = "ranger", 
+                    trControl = trControl,
+                    tuneGrid = tuneGrid)
+```
+---
+# Comparing the Three Models
+
+```{r}
+results <- resamples(list('TreeBag' = model1,
+                          'RPart2' = model2,
+                          'Random Forest' = forest_ranger
+                          ))
+bwplot(results)
+```
+---
+# Final Selection for the Model
+
+```{r}
+predFinal <- predict(forest_ranger, df_test)
+
+cmFinal <- confusionMatrix(data = predFinal, reference = df_test$target, positive = "low")
+
+cmFinal$overall[1]
+```
+---
+# Using Sex As Target
+
+```{r}
+df <- read_csv('C:/Users/student/OneDrive - Bryant University/Desktop/Statistical_Analysis_with_R/Math421/Math421/PollackSamMidterm.csv')
+
+df$target <- case_when(
+    df$sex==1 ~ 'Male',
+    df$sex==2 ~ 'Female',
+    TRUE ~ 'Unknown'
+)
+```
+
+```{r, include=FALSE}
+df$provider <- case_when(
+  df$provider == 7201 ~ 'Newport',
+  df$provider == 7202 ~ 'St. Joseph Health Services of RI',
+  df$provider == 7203 ~ 'Memorial',
+  df$provider == 7204 ~ 'Miriam',
+  df$provider == 7205 ~ 'Rhode Island Hospital',
+  df$provider == 7206 ~ 'Roger Williams',
+  df$provider == 7209 ~ 'South County',
+  df$provider == 7210 ~ 'Kent County',
+  df$provider == 7211 ~ 'Westerly',
+  df$provider == 7212 ~ 'Rehab of RI',
+  df$provider == 7213 ~ 'Landmark Medical Center',
+  df$provider == 7214 ~ 'Women and Infants',
+  df$provider == 7215 ~ 'Bradley',
+  TRUE ~ 'Butler'
+)
+
+df$raceethn <- case_when(
+  df$raceethn == 1 ~ 'White, not Hispanic',
+  df$raceethn == 2 ~ 'Black, not Hispanic',
+  df$raceethn == 3 ~ 'Asian, not Hispanic',
+  df$raceethn == 4 ~ 'American Indian, not Hispanic',
+  df$raceethn == 5 ~ 'Native American, not Hispanic',
+  df$raceethn == 6 ~ 'Other, not Hispanic',
+  df$raceethn == 7 ~ 'Hispanic, all races',
+  df$raceethn == 9 ~ 'Unknown Race/ethnicity',
+  TRUE ~ 'Missing/Unknown'
+)
+
+df$admtype <- case_when(
+  df$admtype == 1 ~ 'Emergency',
+  df$admtype == 2 ~ 'Urgent',
+  df$admtype == 3 ~ 'Electric',
+  df$admtype == 4 ~ 'Newborn',
+  df$admtype == 5 ~ 'Court Committal (before 1/1/2005)',
+  df$admtype == 6 ~ 'Trauma (as of 1/1/2005)',
+  TRUE ~ 'Information Not Available'
+)
+
+df$campus <- case_when(
+  df$campus == 0 ~ 'Hospital Has Only One Premise',
+  df$campus == 1 ~ 'St. Joseph Health Services of Rhode Island - Our Lady of Fatima Hospital',
+  df$campus == 2 ~ 'St. Joseph Health Services of Rhode Island - St. Joseph Hospital for Specialty Care',
+  df$campus == 3 ~ 'Rhode Island Hospital - Adult',
+  TRUE ~ 'Rhode Island Hospital - Hasbro'
+)
+
+last_df <- df %>% select("target", "age", "tot", "raceethn", "provider", "moa", "mod", "admtype", "campus", "los")
+
+library(tidyverse)
+library(caret)
+
+last_df <- last_df %>% 
+  filter(raceethn!='',admtype!='') %>% 
+  mutate(target=as.factor(target),
+         age=age,
+         tot=tot,
+         raceethn=as.factor(raceethn),
+         provider=as.factor(provider),
+         moa=moa,
+         mod=mod,
+         admtype=as.factor(admtype),
+         campus=as.factor(campus),
+         los=los)
+
+set.seed(2020)
+splitIndex <- createDataPartition(last_df$target, p = .1,
+                                  list = FALSE)
+
+last_df_train <- last_df[ splitIndex,]
+last_df_test <- last_df[-splitIndex,]
+
+library(rpart)
+library(rattle)
+
+last_tree_model <- rpart(target ~ ., data = last_df_train,
+                    control = rpart.control(maxdepth = 3))
+last_pred <- predict(last_tree_model, last_df_test, type = "class")
+last_cm <- confusionMatrix(data = last_pred, reference = last_df_test$target, positive = "Male")
+
+library(mlbench)
+library(tidyverse)
+library(caret)
+
+trControl = trainControl(method = "cv",
+                         number = 5)
+
+tuneGrid = expand.grid(mtry = 2:4,
+                       splitrule = c('gini', 'extratrees'),
+                       min.node.size = c(1:10))
+
+#Model 1
+last_model1 <- train(target ~ ., data=last_df_train,
+                method = "treebag",
+                trControl = trControl,
+                maxdepth = 5)
+
+last_pred1 <- predict(last_model1, last_df_test)
+last_cm1 <- confusionMatrix(data = pred1, reference = df_test$target)
+
+#Model 2
+last_model2 <- train(target ~ ., data=last_df_train,
+                method = "rpart2",
+                trControl = trControl,
+                maxdepth = 5)
+
+last_pred2 <- predict(last_model2, last_df_test)
+last_cm2 <- confusionMatrix(data = last_pred2, reference = last_df_test$target)
+
+#Results
+last_forest_ranger <- train(target~., data=last_df_train, 
+                    method = "ranger", 
+                    trControl = trControl,
+                    tuneGrid = tuneGrid)
+```
+---
+# Using Sex As Target
+
+```{r}
+last_results <- resamples(list('TreeBag' = last_model1,
+                          'RPart2' = last_model2,
+                          'Random Forest' = last_forest_ranger
+                          ))
+bwplot(last_results)
+```
+---
+# Errors/Challenges and Lessons Learned
+
+- 'as.factor' issue: when trying to create the new dataframe for predictive modeling, I mistakenly tried to set quantitative variables as factors when I should've only done so with categorical variables (had to change certain quantitative variables to categorical before setting them as factors).
+
+- Choosing models that worked: certain methods didn't run properly when creating the models for comparison
+
+- Variable name continuity: many error messages I had in my code resulted from simply not renaming variables after changing a variable name once
+
+- Saving plots: Easier to split plots and code into separate slides than trying to save them into one slide.
+
+- Saving time: Test code chunks using smaller dataframes before running it on the dataframe you want to use.

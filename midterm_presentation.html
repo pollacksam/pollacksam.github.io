@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title> Midterm Presentation</title>
+    <meta charset="utf-8" />
+    <meta name="author" content=" Sam Pollack " />
+    <script src="libs/header-attrs-2.16/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# <img src="bat_cartoon.png" /> Midterm Presentation
+]
+.author[
+### <font size="5"> Sam Pollack </font>
+]
+
+---
+
+
+&lt;style&gt;
+
+.remark-slide-content {
+  background-color: #FFFFFF;
+  border-top: 80px solid #F9C389;
+  font-size: 17px;
+  font-weight: 300;
+  line-height: 1.5;
+  padding: 1em 2em 1em 2em
+}
+
+.inverse {
+  background-color: #696767;
+  border-top: 80px solid #696767;
+  text-shadow: none;
+  background-image: url(https://github.com/goodekat/presentations/blob/master/2019-isugg-gganimate-spooky/figures/spider.png?raw=true);
+	background-position: 50% 75%;
+  background-size: 150px;
+}
+
+.your-turn{
+  background-color: #8C7E95;
+  border-top: 80px solid #F9C389;
+  text-shadow: none;
+  background-image: url(https://github.com/goodekat/presentations/blob/master/2019-isugg-gganimate-spooky/figures/spider.png?raw=true);
+	background-position: 95% 90%;
+  background-size: 75px;
+}
+
+.title-slide {
+  background-color: #F9C389;
+  border-top: 80px solid #F9C389;
+  background-image: none;
+}
+
+.title-slide &gt; h1  {
+  color: #111111;
+  font-size: 40px;
+  text-shadow: none;
+  font-weight: 400;
+  text-align: left;
+  margin-left: 15px;
+  padding-top: 80px;
+}
+.title-slide &gt; h2  {
+  margin-top: -25px;
+  padding-bottom: -20px;
+  color: #111111;
+  text-shadow: none;
+  font-weight: 300;
+  font-size: 35px;
+  text-align: left;
+  margin-left: 15px;
+}
+.title-slide &gt; h3  {
+  color: #111111;
+  text-shadow: none;
+  font-weight: 300;
+  font-size: 25px;
+  text-align: left;
+  margin-left: 15px;
+  margin-bottom: -30px;
+}
+
+&lt;/style&gt;
+
+&lt;style type="text/css"&gt;
+.left-code {
+  color: #777;
+  width: 48%;
+  height: 92%;
+  float: left;
+}
+.right-plot {
+  width: 51%;
+  float: right;
+  padding-left: 1%;
+}
+&lt;/style&gt;
+
+
+
+# Setting Up The Data
+
+
+```r
+df &lt;- read_csv('C:/Users/student/OneDrive - Bryant University/Desktop/Statistical_Analysis_with_R/Math421/Math421/PollackSamMidterm.csv')
+
+#Removing Columns
+df &lt;- df %&gt;% select(-payfix, -raceethn, -admtype, 
+                    -asource, -preopday, -bwght, 
+                    -ecodub92, -pt_state, -diag_adm, 
+                    -er_mode, -obs_hour, -nicu_day)
+```
+---
+# Plot 1
+
+
+```r
+plot1 &lt;- df %&gt;% ggplot()+
+  geom_bar(mapping = aes(x = moa))+
+  labs(x='Month of Admission',
+       y='count',
+       title='Count of Patient Month of Admission',
+       caption='A bar chart that indicates that October had
+       the most patients admitted of any month.')
+
+plot(plot1)
+```
+
+&lt;img src="midterm_presentation_files/figure-html/unnamed-chunk-3-1.png" style="display: block; margin: auto;" /&gt;
+---
+# Plot 2
+
+
+```r
+df$sex &lt;- case_when(
+    df$sex==1 ~ 'Male',
+    df$sex==2 ~ 'Female',
+    TRUE ~ 'Unknown'
+  )
+
+plot2 &lt;- df %&gt;% 
+  ggplot()+ 
+  geom_point(aes(x=age, y=tot, color = sex))+
+  labs(x='Age',
+       y='Total Charge',
+       title='Total Charge Rates by Age Based on Sex',
+       caption='A scatter plot displaying the relationship between 
+       patient age and total charge rates based on sex.')
+```
+---
+# Plot 2
+
+
+```r
+plot(plot2)
+```
+
+&lt;img src="midterm_presentation_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" /&gt;
+---
+# Plot 3
+
+
+```r
+plot3 &lt;- df %&gt;% 
+  ggplot()+
+  geom_bar(mapping=aes(x=moa, fill=sex), position = 'fill')+
+  labs(x='Month of Admission',
+       y='Proportion',
+       title='Month of Admission Proportions Based on Sex',
+       caption='A bar chart displaying the proportions 
+       of month of admission for each sex.')
+
+plot(plot3)
+```
+
+&lt;img src="midterm_presentation_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
+---
+# Plot 4
+
+
+```r
+plot4 &lt;- df %&gt;% 
+  ggplot()+
+  geom_boxplot(mapping = aes(x = age, y = sex))+
+  labs(x='Age',
+       y='Sex',
+       title='Age Distributions Based on Sex',
+       caption='A box plot displaying summary 
+       statistics for patient age for each sex.')
+
+plot(plot4)
+```
+
+&lt;img src="midterm_presentation_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" /&gt;
+---
+# Plot 5
+
+
+```r
+plot5 &lt;- df %&gt;% 
+  ggplot()+
+  geom_point(mapping = aes(x = los, y = tot))+
+  facet_wrap(~sex)+
+  labs(x='Length of Stay',
+       y='Total Charge',
+       title='Relationship Between Length of Stay Total Charge Rates by Sex',
+       caption='Both sexes follow a positive relationship 
+       between length of stay and total charge.')
+```
+---
+# Plot 5
+
+
+```r
+plot(plot5)
+```
+
+&lt;img src="midterm_presentation_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" /&gt;
+---
+# Plot 6
+
+
+```r
+plot6 &lt;- df %&gt;% 
+  filter(age&gt;65) %&gt;% 
+  ggplot()+ 
+  geom_point(aes(x=age, y=tot, color = sex))+
+  labs(x='Age',
+       y='Total Charge',
+       title='Total Charge Rates for Retired Patients
+       by Age Based on Sex',
+       caption='A scatter plot displaying the relationship between patient 
+       age and total charge rates for retired patients based on sex.')
+```
+---
+# Plot 6
+
+
+```r
+plot(plot6)
+```
+
+&lt;img src="midterm_presentation_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" /&gt;
+---
+# Plot 7
+
+
+```r
+plot7 &lt;- df %&gt;% 
+  ggplot()+
+  geom_bar(mapping=aes(x=sex, fill=sex), position = 'dodge')+
+  facet_wrap(~provider)+
+  labs(x='Sex',
+       y='Count',
+       title='Count of Patient Sex at Each Provider',
+       caption='A series of bar charts displaying the
+       counts of patient sex across each provider.')
+```
+---
+# Plot 7
+
+
+```r
+plot(plot7)
+```
+
+&lt;img src="midterm_presentation_files/figure-html/unnamed-chunk-13-1.png" style="display: block; margin: auto;" /&gt;
+---
+# Categorizing Provider
+
+
+```r
+df$provider &lt;- case_when(
+  df$provider == 7201 ~ 'Newport',
+  df$provider == 7202 ~ 'St. Joseph Health Services of RI',
+  df$provider == 7203 ~ 'Memorial',
+  df$provider == 7204 ~ 'Miriam',
+  df$provider == 7205 ~ 'Rhode Island Hospital',
+  df$provider == 7206 ~ 'Roger Williams',
+  df$provider == 7209 ~ 'South County',
+  df$provider == 7210 ~ 'Kent County',
+  df$provider == 7211 ~ 'Westerly',
+  df$provider == 7212 ~ 'Rehab of RI',
+  df$provider == 7213 ~ 'Landmark Medical Center',
+  df$provider == 7214 ~ 'Women and Infants',
+  df$provider == 7215 ~ 'Bradley',
+  TRUE ~ 'Butler'
+)
+```
+---
+# Plot 8
+
+
+```r
+plot8 &lt;- df %&gt;% 
+  ggplot()+
+  geom_boxplot(mapping = aes(x = age, y = provider))+
+  labs(x='Age',
+       y='Provider',
+       title='Age Distributions Based on Provider',
+       caption='A box plot displaying summary 
+       statistics for patient age for each provider.')
+
+plot(plot8)
+```
+
+&lt;img src="midterm_presentation_files/figure-html/unnamed-chunk-15-1.png" style="display: block; margin: auto;" /&gt;
+---
+# Plot 9
+
+
+```r
+plot9 &lt;- df %&gt;% 
+  filter(provider=='Bradley'|
+         provider=='Butler'|
+         provider=='Rhode Island Hospital'
+         ) %&gt;% 
+  ggplot()+ 
+  geom_point(aes(x=age, y=tot, color = provider))+
+  labs(x='Age',
+       y='Total Charge',
+       title='Total Charge Rates by Age For Male-Majority Provider',
+       caption='A scatter plot displaying the relationship between 
+       patient age and total charge rates based on provider.')
+```
+---
+# Plot 9
+
+
+```r
+plot(plot9)
+```
+
+&lt;img src="midterm_presentation_files/figure-html/unnamed-chunk-17-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Plot 10
+
+
+```r
+plot10 &lt;- df %&gt;% 
+  filter(
+    provider=='Kent County'|
+    provider=='Landmark Medical Center'|
+    provider=='Miriam'|
+    provider=='Newport'|
+    provider=='Roger Williams'|
+    provider=='South County'|
+    provider=='St. Joseph Health Services of RI'|
+    provider=='Westerly'|
+    provider=='Women and Infants'
+         ) %&gt;% 
+  ggplot()+ 
+  geom_point(aes(x=age, y=tot, color = provider))+
+  labs(x='Age',
+       y='Total Charge',
+       title='Total Charge Rates by Age For Female-Majority Provider',
+       caption='A scatter plot displaying the relationship between 
+       patient age and total charge rates based on provider.')
+```
+---
+# Plot 10
+
+
+```r
+plot(plot10)
+```
+
+&lt;img src="midterm_presentation_files/figure-html/unnamed-chunk-19-1.png" style="display: block; margin: auto;" /&gt;
+---
+# Animated Plot
+
+
+```r
+library(gganimate)
+library(gifski)
+library(ggplot2)
+library(tidyverse)
+library(knitr)
+library(lubridate)
+
+d1 &lt;- df %&gt;% group_by(moa, provider) %&gt;% summarise(mean = mean(tot))
+d2 &lt;- d1 %&gt;% group_by(moa) %&gt;% mutate(rank=rank(-mean)) 
+d3 &lt;- d2 %&gt;% filter(rank &lt;= 10)
+a1 &lt;- d3 %&gt;% ggplot(aes(x=rank, y=mean, group=provider, fill=provider, label=provider)) + geom_col()+
+    geom_text(aes(y = mean, label = provider), hjust = 1.4)+ 
+    coord_flip(clip = "off", expand = FALSE) +scale_x_reverse()+
+    labs(title = 'Month {closest_state}', x='', y='Total Charge', fill='Provider')+
+    theme(plot.title = element_text(hjust = 1, size = 22),
+          axis.ticks.y = element_blank(),
+          axis.text.y  = element_blank()) + 
+    transition_states(moa)+
+    ease_aes("cubic-in-out")
+```
+---
+# Animated Plot
+
+
+```r
+animate(a1, nframes = 400)
+```
+
+&lt;img src="midterm_presentation_files/figure-html/unnamed-chunk-21-1.gif" style="display: block; margin: auto;" /&gt;
+---
+# Setting Up Data for Modeling
+
+
+```r
+df &lt;- read_csv('C:/Users/student/OneDrive - Bryant University/Desktop/Statistical_Analysis_with_R/Math421/Math421/PollackSamMidterm.csv')
+
+df$target &lt;- case_when(
+  df$tot &lt;= median(df$tot) ~ 'low',
+  TRUE ~ 'high'
+)
+
+df$sex &lt;- case_when(
+    df$sex==1 ~ 'Male',
+    df$sex==2 ~ 'Female',
+    TRUE ~ 'Unknown'
+  )
+
+df$provider &lt;- case_when(
+  df$provider == 7201 ~ 'Newport',
+  df$provider == 7202 ~ 'St. Joseph Health Services of RI',
+  df$provider == 7203 ~ 'Memorial',
+  df$provider == 7204 ~ 'Miriam',
+  df$provider == 7205 ~ 'Rhode Island Hospital',
+  df$provider == 7206 ~ 'Roger Williams',
+  df$provider == 7209 ~ 'South County',
+  df$provider == 7210 ~ 'Kent County',
+  df$provider == 7211 ~ 'Westerly',
+  df$provider == 7212 ~ 'Rehab of RI',
+  df$provider == 7213 ~ 'Landmark Medical Center',
+  df$provider == 7214 ~ 'Women and Infants',
+  df$provider == 7215 ~ 'Bradley',
+  TRUE ~ 'Butler'
+)
+```
+---
+# Setting Up Data for Modeling
+
+
+```r
+df$raceethn &lt;- case_when(
+  df$raceethn == 1 ~ 'White, not Hispanic',
+  df$raceethn == 2 ~ 'Black, not Hispanic',
+  df$raceethn == 3 ~ 'Asian, not Hispanic',
+  df$raceethn == 4 ~ 'American Indian, not Hispanic',
+  df$raceethn == 5 ~ 'Native American, not Hispanic',
+  df$raceethn == 6 ~ 'Other, not Hispanic',
+  df$raceethn == 7 ~ 'Hispanic, all races',
+  df$raceethn == 9 ~ 'Unknown Race/ethnicity',
+  TRUE ~ 'Missing/Unknown'
+)
+
+df$admtype &lt;- case_when(
+  df$admtype == 1 ~ 'Emergency',
+  df$admtype == 2 ~ 'Urgent',
+  df$admtype == 3 ~ 'Electric',
+  df$admtype == 4 ~ 'Newborn',
+  df$admtype == 5 ~ 'Court Committal (before 1/1/2005)',
+  df$admtype == 6 ~ 'Trauma (as of 1/1/2005)',
+  TRUE ~ 'Information Not Available'
+)
+```
+---
+# Setting Up Data for Modeling
+
+
+```r
+df$campus &lt;- case_when(
+  df$campus == 0 ~ 'Hospital Has Only One Premise',
+  df$campus == 1 ~ 'St. Joseph Health Services of Rhode Island - Our Lady of Fatima Hospital',
+  df$campus == 2 ~ 'St. Joseph Health Services of Rhode Island - St. Joseph Hospital for Specialty Care',
+  df$campus == 3 ~ 'Rhode Island Hospital - Adult',
+  TRUE ~ 'Rhode Island Hospital - Hasbro'
+)
+
+new_df &lt;- df %&gt;% select("target", "age", "sex", "raceethn", "provider", "moa", "mod", "admtype", "campus", "los")
+```
+
+
+
+---
+# Comparing the Three Models
+
+
+```r
+results &lt;- resamples(list('TreeBag' = model1,
+                          'RPart2' = model2,
+                          'Random Forest' = forest_ranger
+                          ))
+bwplot(results)
+```
+
+&lt;img src="midterm_presentation_files/figure-html/unnamed-chunk-26-1.png" style="display: block; margin: auto;" /&gt;
+---
+# Final Selection for the Model
+
+
+```r
+predFinal &lt;- predict(forest_ranger, df_test)
+
+cmFinal &lt;- confusionMatrix(data = predFinal, reference = df_test$target, positive = "low")
+
+cmFinal$overall[1]
+```
+
+```
+## Accuracy 
+## 0.839111
+```
+---
+# Using Sex As Target
+
+
+```r
+df &lt;- read_csv('C:/Users/student/OneDrive - Bryant University/Desktop/Statistical_Analysis_with_R/Math421/Math421/PollackSamMidterm.csv')
+
+df$target &lt;- case_when(
+    df$sex==1 ~ 'Male',
+    df$sex==2 ~ 'Female',
+    TRUE ~ 'Unknown'
+)
+```
+
+
+---
+# Using Sex As Target
+
+
+```r
+last_results &lt;- resamples(list('TreeBag' = last_model1,
+                          'RPart2' = last_model2,
+                          'Random Forest' = last_forest_ranger
+                          ))
+bwplot(last_results)
+```
+
+&lt;img src="midterm_presentation_files/figure-html/unnamed-chunk-30-1.png" style="display: block; margin: auto;" /&gt;
+---
+# Errors/Challenges and Lessons Learned
+
+- 'as.factor' issue: when trying to create the new dataframe for predictive modeling, I mistakenly tried to set quantitative variables as factors when I should've only done so with categorical variables (had to change certain quantitative variables to categorical before setting them as factors).
+
+- Choosing models that worked: certain methods didn't run properly when creating the models for comparison
+
+- Variable name continuity: many error messages I had in my code resulted from simply not renaming variables after changing a variable name once
+
+- Saving plots: Easier to split plots and code into separate slides than trying to save them into one slide.
+
+- Saving time: Test code chunks using smaller dataframes before running it on the dataframe you want to use.
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"slideNumberFormat": "<div class=\"progress-bar-container\">\n  <div class=\"progress-bar\" style=\"width: calc(%current% / %total% * 100%);\">\n  </div>\n</div>`"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
