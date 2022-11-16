@@ -1,0 +1,225 @@
+
+---
+output: 
+  html_document:
+  pdf_document: default
+  word_document: default
+title: "Assignment 14: Twitters Mining with rtweet"
+---
+
+***How to do it?***: 
+
+- Open the Rmarkdown file of this assignment ([link](fa2021_assignment14.Rmd)) in Rstudio. 
+
+- Right under each **question**, insert  a code chunk (you can use the hotkey `Ctrl + Alt + I` to add a code chunk) and code the solution for the question. 
+
+- `Knit` the rmarkdown file (hotkey: `Ctrl + Alt + K`) to export an html.  
+
+-  Publish the html file to your Githiub Page. 
+
+***Submission***: Submit the link on Github of the assignment to Canvas
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE)
+```
+
+
+[Sample Codes](https://bryantstats.github.io/math421/slides/16_text_mining_rtweet.html)
+
+-------
+
+1. Pick a keyword or hashtag. Download the data associated with the keyword/hashtag. Plot at least 5 plots to visualize the data associated with the keyword/hashtag. All plots should have titles and captions. 
+```{r}
+library(rtweet) 
+library(tidytext)
+library(ggpubr) 
+library(tidyverse) 
+library(knitr)
+library(lubridate)
+
+#auth_setup_default()
+
+keyword_search = '#worldwar3'
+
+df <- search_tweets(q = keyword_search, 
+                        n = Inf, # number of tweets
+                        include_rts = FALSE,
+                        `-filter` = "replies",
+                        lang = "en") %>% 
+  mutate(created_at = ymd_hms(format(created_at, tz = "US/Eastern")))
+
+write_csv(df, 'twitter_data.csv')
+
+
+# Plot 1: Frequency of Tweets by Time
+
+ts_plot(df, "hours") +
+  labs(x = NULL, y = NULL,
+       title = "Frequency of #worldwar3 Tweets by Time",
+       subtitle = paste0(format(min(df$created_at), "%d %B %Y"), " to ", format(max(df$created_at),"%d %B %Y")),
+       caption = "Data collected from Twitter's REST API via rtweet") +
+  theme_minimal()
+
+
+# Plot 2: Top Emojis in the Tweets
+
+#install.packages("devtools")
+#devtools::install_github("hadley/emo")
+
+library(emo)
+df %>%
+  mutate(emoji = ji_extract_all(text)) %>%
+  unnest(cols = c(emoji)) %>%
+  count(emoji, sort = TRUE) %>%
+  head(5) %>% 
+  ggplot(aes(y=reorder(emoji,n), x=n)) +
+  geom_col()+
+  theme(axis.text.y = element_text(size = 40))+
+  labs(x = 'Top Emojis in the Tweets', y = '')
+
+
+# Plot 3: Hashtag Cloud
+
+#install.packages('RColorBrewer')
+library(RColorBrewer)
+
+pal <- brewer.pal(8,"Dark2")
+library(wordcloud) 
+
+df %>% 
+  filter(created_at>='2022-11-14') %>% 
+  unnest_tokens(output = hashtag, input = text, token = "tweets") %>%
+  filter(!hashtag %in% c("#worldwar3", "#worldwariii", "#ww3", "wwiii"), str_detect(hashtag, "^#")) %>% 
+  count(hashtag, sort = TRUE) %>%
+  mutate(hashtag = str_remove(hashtag, '#')) %>% 
+  filter(hashtag != 'mufc') %>% 
+  with(wordcloud(hashtag, n, random.order = FALSE, max.words = 50, colors = pal))
+
+
+# Plot 4: Mentions
+
+df %>% 
+  unnest_tokens(mentions, text, "tweets", to_lower = FALSE) %>%
+  filter(str_detect(mentions, "^@")) %>%  
+  count(mentions, sort = TRUE) %>%
+  head(10)
+
+df %>% 
+  unnest_tokens(mentions, text, "tweets", to_lower = FALSE) %>%
+  filter(str_detect(mentions, "^@")) %>%  
+  count(mentions, sort = TRUE) %>%
+  head(10) %>% 
+  ggplot(aes(x = n, y = reorder(mentions, n)))+
+  geom_col()+
+  labs(x = 'Top 10 Mentions in the Tweets', y = '')
+
+
+# Plot 5: Sentiment Analysis
+
+df %>%
+    unnest_tokens(input = text, output = word) %>% 
+    anti_join(get_stopwords()) %>% 
+    count(word, sort = TRUE) %>%
+    inner_join(get_sentiments("nrc")) %>%
+    filter(!is.na(sentiment)) %>%
+    count(sentiment, sort = TRUE) %>% 
+    mutate(n = n/sum(n)) %>% 
+    ggplot(aes(y= reorder(sentiment, n), x = n))+geom_col()+
+    labs(y='Relative Frequency', x ='')
+```
+
+2. Choose a location then pick a trending keyword/hashtag in the location. Download the data associated with the keyword/hashtag. Plot at least 5 plots to visualize the data associated with the keyword/hashtag. All plots should have titles and captions. 
+```{r}
+# Show available locations to get trends
+trends_available()
+
+# See World wide trends twits
+get_trends('Toronto')
+
+keyword_search = '#RIPJimmyFallon'
+
+df <- search_tweets(q = keyword_search, 
+                        n = Inf, # number of tweets
+                        include_rts = FALSE,
+                        `-filter` = "replies",
+                        lang = "en") %>% 
+  mutate(created_at = ymd_hms(format(created_at, tz = "US/Eastern")))
+
+write_csv(df, 'twitter_data.csv')
+
+# Plot 1: Frequency of Tweets by Time
+
+ts_plot(df, "hours") +
+  labs(x = NULL, y = NULL,
+       title = "Frequency of #RIPJimmyFallon Tweets by Time",
+       subtitle = paste0(format(min(df$created_at), "%d %B %Y"), " to ", format(max(df$created_at),"%d %B %Y")),
+       caption = "Data collected from Twitter's REST API via rtweet") +
+  theme_minimal()
+
+
+# Plot 2: Top Emojis in the Tweets
+
+#install.packages("devtools")
+#devtools::install_github("hadley/emo")
+
+library(emo)
+df %>%
+  mutate(emoji = ji_extract_all(text)) %>%
+  unnest(cols = c(emoji)) %>%
+  count(emoji, sort = TRUE) %>%
+  head(5) %>% 
+  ggplot(aes(y=reorder(emoji,n), x=n)) +
+  geom_col()+
+  theme(axis.text.y = element_text(size = 40))+
+  labs(x = 'Top Emojis in the Tweets', y = '')
+
+
+# Plot 3: Hashtag Cloud
+
+#install.packages('RColorBrewer')
+library(RColorBrewer)
+
+pal <- brewer.pal(8,"Dark2")
+library(wordcloud) 
+
+df %>% 
+  filter(created_at>='2022-11-14') %>% 
+  unnest_tokens(output = hashtag, input = text, token = "tweets") %>%
+  filter(!hashtag %in% c("#RIPJimmyFallon", "ripjimmyfallon", "JimmyFallon", "Jimmy", "jimmy", "Fallon", "fallon'"), str_detect(hashtag, "^#")) %>% 
+  count(hashtag, sort = TRUE) %>%
+  mutate(hashtag = str_remove(hashtag, '#')) %>% 
+  filter(hashtag != 'mufc') %>% 
+  with(wordcloud(hashtag, n, random.order = FALSE, max.words = 50, colors = pal))
+
+
+# Plot 4: Mentions
+
+df %>% 
+  unnest_tokens(mentions, text, "tweets", to_lower = FALSE) %>%
+  filter(str_detect(mentions, "^@")) %>%  
+  count(mentions, sort = TRUE) %>%
+  head(10)
+
+df %>% 
+  unnest_tokens(mentions, text, "tweets", to_lower = FALSE) %>%
+  filter(str_detect(mentions, "^@")) %>%  
+  count(mentions, sort = TRUE) %>%
+  head(10) %>% 
+  ggplot(aes(x = n, y = reorder(mentions, n)))+
+  geom_col()+
+  labs(x = 'Top 10 Mentions in the Tweets', y = '')
+
+
+# Plot 5: Sentiment Analysis
+
+df %>%
+    unnest_tokens(input = text, output = word) %>% 
+    anti_join(get_stopwords()) %>% 
+    count(word, sort = TRUE) %>%
+    inner_join(get_sentiments("nrc")) %>%
+    filter(!is.na(sentiment)) %>%
+    count(sentiment, sort = TRUE) %>% 
+    mutate(n = n/sum(n)) %>% 
+    ggplot(aes(y= reorder(sentiment, n), x = n))+geom_col()+
+    labs(y='Relative Frequency', x ='')
+```
