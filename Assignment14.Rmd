@@ -89,7 +89,7 @@ library(wordcloud)
 df %>% 
   filter(created_at>='2022-11-14') %>% 
   unnest_tokens(output = hashtag, input = text, token = "tweets") %>%
-  filter(!hashtag %in% c("#worldwar3", "#worldwariii", "#ww3", "wwiii"), str_detect(hashtag, "^#")) %>% 
+  filter(!hashtag %in% c("#worldwar3", "#worldwariii", "#ww3", "#wwiii"), str_detect(hashtag, "^#")) %>% 
   count(hashtag, sort = TRUE) %>%
   mutate(hashtag = str_remove(hashtag, '#')) %>% 
   filter(hashtag != 'mufc') %>% 
@@ -185,7 +185,7 @@ library(wordcloud)
 df %>% 
   filter(created_at>='2022-11-14') %>% 
   unnest_tokens(output = hashtag, input = text, token = "tweets") %>%
-  filter(!hashtag %in% c("#RIPJimmyFallon", "ripjimmyfallon", "JimmyFallon", "Jimmy", "jimmy", "Fallon", "fallon'"), str_detect(hashtag, "^#")) %>% 
+  filter(!hashtag %in% c("#RIPJimmyFallon", "#ripjimmyfallon", "#JimmyFallon", "#Jimmy", "#jimmy", "#Fallon", "#fallon'"), str_detect(hashtag, "^#")) %>% 
   count(hashtag, sort = TRUE) %>%
   mutate(hashtag = str_remove(hashtag, '#')) %>% 
   filter(hashtag != 'mufc') %>% 
