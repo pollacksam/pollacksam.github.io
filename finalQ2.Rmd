@@ -1,0 +1,200 @@
+---
+title: "#Celtics Tweets"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    logo: logo.png
+    source_code: embed
+    social: menu
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message = FALSE)
+```
+
+```{r, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(plotly)
+library(knitr)
+library(DT)
+library(shiny)
+library(packrat)
+library(rsconnect)
+library(rtweet) 
+library(tidytext)
+library(ggpubr) 
+library(lubridate)
+```
+
+
+```{r, include=FALSE, eval=FALSE}
+keyword_search = '#Celtics'
+
+df <- search_tweets(q = keyword_search, 
+                        n = Inf, # number of tweets
+                        include_rts = FALSE,
+                        `-filter` = "replies",
+                        lang = "en") %>% 
+  mutate(created_at = ymd_hms(format(created_at, tz = "US/Eastern")))
+
+write_csv(df, 'final_twitter_data.csv')
+```
+
+
+```{r}
+# Create Charts
+df <- read_csv('final_twitter_data.csv')
+
+p <- ts_plot(df, "hours") +
+  labs(x = NULL, y = NULL,
+       title = "Frequency of #Celtics Tweets by Time",
+       subtitle = paste0(format(min(df$created_at), "%d %B %Y"), " to ", format(max(df$created_at),"%d %B %Y")),
+       caption = "Data collected from Twitter's REST API via rtweet") +
+  theme_minimal()
+
+library(emo)
+p1 <- df %>%
+  mutate(emoji = ji_extract_all(text)) %>%
+  unnest(cols = c(emoji)) %>%
+  count(emoji, sort = TRUE) %>%
+  head(5) %>% 
+  ggplot(aes(y=reorder(emoji,n), x=n)) +
+  geom_col()+
+  theme(axis.text.y = element_text(size = 40))+
+  labs(x = 'Top Emojis in the Tweets', y = '')
+```
+
+{.sidebar}
+=======================================================================
+
+### 1. Boston Celtics
+
+The Boston Celtics season has been off to a very strong start. Being the top team in the Eastern Conference, there is plenty of data to work with for #Celtics tweets.
+
+### 2. Flexdashboard and Plotly
+
+This interactive uses `flexdashboard` and `plotly` to visualize the data. 
+
+Main Tab 1
+=======================================================================
+
+Column {data-width=500, .tabset}
+-----------------------------------------------------------------------
+
+### Column Tab 1
+
+```{r}
+df
+```
+
+
+### Column Tab 2
+
+```{r}
+kable(head(df))
+```
+
+
+### Column Tab 3
+
+```{r}
+datatable(df, options = list(
+  pageLength = 25
+))
+```
+
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Row 1
+
+```{r}
+p
+```
+
+### Row 2
+
+```{r}
+ggplotly(p)
+```
+
+
+Main Tab 2
+=======================================================================
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+#### 1. Plotly for R
+
+Plotly is an R package for creating interactive web-based graphs via plotly's JavaScript graphing library, plotly.js.
+
+The plotly R package serializes ggplot2 figures into Plotly's universal graph JSON. plotly::ggplotly will crawl the ggplot2 figure, extract and translate all of the attributes of the ggplot2 figure into JSON (the colors, the axes, the chart type, etc), and draw the graph with plotly.js. Furthermore, you have the option of manipulating the Plotly object with the style function.
+
+
+#### 2. Customizing the Layout
+
+Since the ggplotly() function returns a plotly object, we can manipulate that object in the same way that we would manipulate any other plotly object. A simple and useful application of this is to specify interaction modes, like plotly.js' layout.dragmode for specifying the mode of click+drag events.
+
+
+#### 3. Example
+
+```{r, echo=TRUE, eval=TRUE}
+library(plotly)
+df <- data.frame(x=c(1, 2, 3, 4), y=c(1, 5, 3, 5), group=c('A', 'A', 'B', 'B'))
+p <- ggplot(data=df, aes(x=x, y=y, colour=group)) + geom_point()
+ggplotly(p)
+```
+
+
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Top Emojis in the Tweets
+
+```{r}
+p1
+```
+
+### Top Emojis in the Tweets (Colorized)
+
+```{r}
+ggplotly(p1)
+```
+
+M
+```{r, include=FALSE, eval=FALSE}
+rsconnect::setAccountInfo(name='pollacksam', token='F6052A2FC4D2AF2EBE0C0F7E7FE96232', secret='7KhO98PHpOrj4NubfNWJFIOVb8EDdWpf5dez/9Nb')
+
+library(rsconnect)
+    rsconnect::deployApp('flex_template.Rmd')
+```
+
+Visualizations
+=======================================================================
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Frequency Chart
+
+```{r}
+ggplotly(p)
+```
+
+### Top Emojis in the Tweets
+
+```{r}
+p1
+```
+
+### Top Emojis in the Tweets (Colorized)
+
+```{r}
+ggplotly(p1)
+```

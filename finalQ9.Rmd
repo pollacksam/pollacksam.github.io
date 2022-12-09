@@ -1,0 +1,171 @@
+
+---
+title: "#Celtics Tweets - Combination of Inputs"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    logo: logo.png
+    source_code: embed
+    social: menu
+
+runtime: shiny
+---
+
+```{r global, include=FALSE}
+# load data in 'global' chunk so it can be shared by all users of the dashboard
+library(flexdashboard)
+library(tidyverse)
+library(plotly)
+library(knitr)
+library(DT)
+library(lubridate)
+df <- read_csv('final_twitter_data.csv')
+
+df$retweeted <- case_when(
+  df$retweet_count >0 ~ 'TRUE',
+  TRUE ~ 'FALSE'
+)
+
+df$favorited <- case_when(
+  df$favorite_count >0 ~ 'TRUE',
+  TRUE ~ 'FALSE'
+)
+
+#Convert Timestamps to Dates
+timestamp <- df$created_at
+posixt <- as.POSIXct(timestamp, origin = "1970-01-01")
+df$created_at <- as.Date(posixt)
+
+celtics_favorited <- unique(df$favorited)
+```
+
+{.sidebar}
+=======================================================================
+
+Many people post tweets with the intention to grab people's attention and potentially start a trending thread. These threads can't exist without the 'like' button. Let's see how many tweets received any likes.  Select the input for the plots.
+
+
+```{r}
+selectInput(inputId = "favorited_input", 
+            label = h2("Select Favorited Status"),
+            choices = celtics_favorited, 
+            selected = 'TRUE')
+
+sliderInput(inputId = "favorite_count_input",
+            label = h2("Select Like Range"),
+            min = min(df$favorite_count, na.rm=TRUE),
+            max = max(df$favorite_count, na.rm=TRUE),
+            value= c(10, 200))
+
+dateRangeInput(inputId = "date_input", 
+               label = h2("Date Range"), 
+               start = min(df$created_at), 
+               end = max(df$created_at),
+               min = min(df$created_at), 
+               max = max(df$created_at))
+```
+
+Main Tab 1
+=======================================================================
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Density Plot
+
+```{r}
+renderPlotly({
+  p1 <- df %>% 
+    filter(favorited==input$favorited_input) %>% 
+    filter(favorite_count>input$favorite_count_input[1], favorite_count<input$favorite_count_input[2]) %>% 
+    filter(created_at > input$date_input[1], created_at < input$date_input[2]) %>% 
+    ggplot(aes(x=display_text_range, color=is_quote_status))+
+    geom_density()
+  ggplotly(p1)
+})
+```
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Bar Plot
+
+```{r}
+renderPlotly({
+  p2 <- df %>% 
+    filter(favorited==input$favorited_input & possibly_sensitive!='NA') %>% 
+    filter(favorite_count>input$favorite_count_input[1], favorite_count<input$favorite_count_input[2]) %>% 
+    filter(created_at > input$date_input[1], created_at < input$date_input[2]) %>%  
+    ggplot(aes(x=possibly_sensitive, fill=is_quote_status))+
+    geom_bar()
+  ggplotly(p2)
+})
+```
+
+
+Main Tab 2
+=======================================================================
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Density Plot
+
+```{r}
+renderPlotly({
+  p1 <- df %>% 
+    filter(favorited==input$favorited_input) %>% 
+    filter(favorite_count>input$favorite_count_input[1], favorite_count<input$favorite_count_input[2]) %>% 
+    filter(created_at > input$date_input[1], created_at < input$date_input[2]) %>% 
+    ggplot(aes(x=display_text_range, color=is_quote_status))+
+    geom_density()
+  ggplotly(p1)
+})
+```
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### What is Density Plot?
+
+- A density plot is an alternative to Histogram used for visualizing the distribution of a continuous variable. The peaks of a Density Plot help to identify where values are concentrated over the interval of the continuous variable. Compared to Histograms, Density Plots are better at finding the distribution shape because they are re not affected by the number of bins used (each bar used in a typical histogram).
+
+- For example, a Histogram with only 4 bins wouldn’t produce a distinguishable enough shape of distribution as a 30-bin Histogram would. However, with Density Plots, this isn’t an issue.
+
+
+
+Main Tab 3
+=======================================================================
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Bar Plot
+
+```{r}
+renderPlotly({
+  p2 <- df %>% 
+    filter(favorited==input$favorited_input & possibly_sensitive!='NA') %>% 
+    filter(favorite_count>input$favorite_count_input[1], favorite_count<input$favorite_count_input[2]) %>% 
+    filter(created_at > input$date_input[1], created_at < input$date_input[2]) %>%  
+    ggplot(aes(x=possibly_sensitive, fill=is_quote_status))+
+    geom_bar()
+  ggplotly(p2)
+})
+```
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### What is Bar Chart?
+
+- There are two types of bar charts: geom_bar() and geom_col(). geom_bar() makes the height of the bar proportional to the number of cases in each group (or if the weight aesthetic is supplied, the sum of the weights). 
+
+- If you want the heights of the bars to represent values in the data, use geom_col() instead. geom_bar() uses stat_count() by default: it counts the number of cases at each x position. geom_col() uses stat_identity(): it leaves the data as is.
+
+```{r}
+image_url <- "https://s3-us-west-2.amazonaws.com/scorestream-team-profile-pictures/274145/20181010232546_702_mascot300.png"
+```
+<center><img src="`r image_url`"></center>
+

@@ -1,0 +1,226 @@
+
+---
+title: "#Celtics Tweets - Combination of Inputs"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    logo: logo.png
+    source_code: embed
+    social: menu
+
+runtime: shiny
+---
+
+```{r global, include=FALSE}
+# load data in 'global' chunk so it can be shared by all users of the dashboard
+library(flexdashboard)
+library(tidyverse)
+library(plotly)
+library(knitr)
+library(DT)
+library(lubridate)
+df <- read_csv('final_twitter_data.csv')
+
+df$retweeted <- case_when(
+  df$retweet_count >0 ~ 'TRUE',
+  TRUE ~ 'FALSE'
+)
+
+df$favorited <- case_when(
+  df$favorite_count >0 ~ 'TRUE',
+  TRUE ~ 'FALSE'
+)
+
+df$favorite_range <- case_when(
+  df$favorite_count ==0 ~ 'no_likes',
+  df$favorite_count >50 ~ 'many_likes',
+  TRUE ~ 'some_likes'
+)
+
+#Convert Timestamps to Dates
+timestamp <- df$created_at
+posixt <- as.POSIXct(timestamp, origin = "1970-01-01")
+df$created_at <- as.Date(posixt)
+
+celtics_favorited <- unique(df$favorited)
+```
+
+{.sidebar}
+=======================================================================
+
+Many people post tweets with the intention to grab people's attention and potentially start a trending thread. These threads can't exist without the 'like' button. Let's see how many tweets received any likes.  Select the input for the plots.
+
+
+```{r}
+selectInput(inputId = "favorited_input", 
+            label = h2("Select Favorited Status"),
+            choices = celtics_favorited, 
+            selected = 'TRUE')
+
+checkboxGroupInput(inputId = "retweeted_input", 
+                   label = h3("Select Retweeted Status"),
+                   choices = unique(df$retweeted), 
+                   inline = TRUE,
+                   selected = 'TRUE')
+
+sliderInput(inputId = "favorite_count_input",
+            label = h2("Select Like Range"),
+            min = min(df$favorite_count, na.rm=TRUE),
+            max = max(df$favorite_count, na.rm=TRUE),
+            value= c(10, 200))
+
+radioButtons(inputId = "favorite_range_input", 
+             label = h2("Select Favorite Range"),
+             choices = c('no_likes','some_likes','many_likes'),
+             inline = TRUE,
+             selected = 'no_likes')
+
+dateRangeInput(inputId = "date_input", 
+               label = h2("Date Range"), 
+               start = min(df$created_at), 
+               end = max(df$created_at),
+               min = min(df$created_at), 
+               max = max(df$created_at))
+```
+
+Density & Bar Plots
+=======================================================================
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Text Range Density Plot
+
+```{r}
+renderPlotly({
+  p1 <- df %>% 
+    filter(favorited==input$favorited_input) %>% 
+    filter(retweeted==input$retweeted_input) %>% 
+    filter(favorite_count>input$favorite_count_input[1], favorite_count<input$favorite_count_input[2]) %>% 
+    filter(favorite_range==input$favorite_range_input & possibly_sensitive!='NA') %>% 
+    filter(created_at > input$date_input[1], created_at < input$date_input[2]) %>% 
+    ggplot(aes(x=display_text_range, color=is_quote_status))+
+    geom_density()
+  ggplotly(p1)
+})
+```
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Quoted Tweets Being Possibly Sensitive Bar Plot
+
+```{r}
+renderPlotly({
+  p2 <- df %>% 
+    filter(favorited==input$favorited_input) %>% 
+    filter(retweeted==input$retweeted_input) %>% 
+    filter(favorite_count>input$favorite_count_input[1], favorite_count<input$favorite_count_input[2]) %>% 
+    filter(favorite_range==input$favorite_range_input & possibly_sensitive!='NA') %>% 
+    filter(created_at > input$date_input[1], created_at < input$date_input[2]) %>%  
+    ggplot(aes(x=possibly_sensitive, fill=is_quote_status))+
+    geom_bar()
+  ggplotly(p2)
+})
+```
+
+
+Density Plots
+=======================================================================
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Likes Density Plot
+
+```{r}
+renderPlotly({
+  p1 <- df %>% 
+    filter(favorited==input$favorited_input) %>% 
+    filter(retweeted==input$retweeted_input) %>% 
+    filter(favorite_count>input$favorite_count_input[1], favorite_count<input$favorite_count_input[2]) %>% 
+    filter(favorite_range==input$favorite_range_input & possibly_sensitive!='NA') %>% 
+    filter(created_at > input$date_input[1], created_at < input$date_input[2]) %>% 
+    ggplot(aes(x=favorite_count, color=retweeted))+
+    geom_density()
+  ggplotly(p1)
+})
+```
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Retweets Density Plot
+
+```{r}
+renderPlotly({
+  p1 <- df %>% 
+    filter(favorited==input$favorited_input) %>% 
+    filter(retweeted==input$retweeted_input) %>% 
+    filter(favorite_count>input$favorite_count_input[1], favorite_count<input$favorite_count_input[2]) %>% 
+    filter(favorite_range==input$favorite_range_input & possibly_sensitive!='NA') %>% 
+    filter(created_at > input$date_input[1], created_at < input$date_input[2]) %>% 
+    ggplot(aes(x=retweet_count, color=favorited))+
+    geom_density()
+  ggplotly(p1)
+})
+```
+
+Bar Plot
+=======================================================================
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Like Ranges with Respect to Possibly Sensitive Label
+
+```{r}
+renderPlotly({
+  p2 <- df %>% 
+    filter(favorited==input$favorited_input) %>% 
+    filter(retweeted==input$retweeted_input) %>% 
+    filter(favorite_count>input$favorite_count_input[1], favorite_count<input$favorite_count_input[2]) %>% 
+    filter(favorite_range==input$favorite_range_input & possibly_sensitive!='NA') %>% 
+    filter(created_at > input$date_input[1], created_at < input$date_input[2]) %>%  
+    ggplot(aes(x=favorite_range, fill=possibly_sensitive))+
+    geom_bar()
+  ggplotly(p2)
+})
+```
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Why #Celtics?
+
+- The Boston Celtics are an NBA team I've been following since I was in elementary school. This past year they were able to win the Eastern Conference Finals before ultimately falling to the Warriors in 6 games in the Finals. This year they're picking up where they left off, starting off the season 21-5 (as of 12/8/22), which is the best record in the NBA.
+
+- Considering last year's success, I thought it would be interesting to see how the Celtics have trended on Twitter over the past few weeks. Twitter is a very popular social media platform for sports conversations, and many fans take to Twitter to talk about their favorite players and teams. Seeing that the Celtics have also had much recent success, it's no surprise how much available data there was for this project.
+
+```{r}
+library(png)
+image <- readPNG("celtics.png")
+```
+<center><img src="`r image`"></center>
+
+Twitter #Celtics Data
+=======================================================================
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Column Tab 1
+
+```{r}
+kable(head(df))
+```
+
+
+### Column Tab 2
+
+```{r}
+datatable(df, options = list(
+  pageLength = 25
+))
+```

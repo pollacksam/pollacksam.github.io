@@ -1,0 +1,72 @@
+
+---
+title: "Titanic - SelectInput"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    logo: logo.png
+    source_code: embed
+    social: menu
+
+runtime: shiny
+---
+
+```{r global, include=FALSE}
+# load data in 'global' chunk so it can be shared by all users of the dashboard
+library(flexdashboard)
+library(tidyverse)
+library(plotly)
+library(knitr)
+library(DT)
+df <- read_csv('https://bryantstats.github.io/math421/data/titanic.csv')
+df <- drop_na(df, Age) 
+df$Survived = factor(df$Survived)
+
+titanic_sex <- unique(df$Sex)
+```
+
+{.sidebar}
+=======================================================================
+
+The sinking of the Titanic is one of the most infamous shipwrecks in history. While there was some element of luck involved in surviving, it seems some groups of people were more likely to survive than others.  Select the input for the plots. 
+
+```{r}
+selectInput(inputId = "sex_input", 
+            label = h3("Select Gender"),
+            choices = titanic_sex, 
+            selected = 'male')
+```
+
+Main Tab 1
+=======================================================================
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Density Plot
+
+```{r}
+renderPlotly({
+  p1 <- df %>% 
+    filter(Sex==input$sex_input) %>% 
+    ggplot(aes(x=Age, color=Survived))+
+    geom_density()
+  ggplotly(p1)
+})
+```
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Bar Plot
+
+```{r}
+renderPlotly({
+  p2 <- df %>% 
+    filter(Sex==input$sex_input) %>% 
+    ggplot(aes(x=Pclass, fill=Survived))+
+    geom_bar()
+  ggplotly(p2)
+})
+```

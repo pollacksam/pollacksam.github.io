@@ -1,0 +1,217 @@
+
+---
+output: 
+  html_document:
+  pdf_document: default
+  word_document: default
+title: "Final Project - Building Interactive Dashboard"
+---
+
+-------
+
+**Submission Guideline:**  Create one html file from Rmarkdown that answer all the following questions. Include the link of the html file to your Github webpage and submit the link to the html file to Canvas. 
+
+-------
+
+### Question 1. 
+
+- Install the flexdashboard package using `install.packages("flexdashboard")`. 
+
+
+- Create an empty dashboard. In Rstudio, File -> New File -> R Markdown -> From Template -> Flex Dashboard. Knit the rmarkdown file and add the html link to this report. 
+
+[Link to Question 1](finalQ1.html)
+
+### Question 2. 
+
+Use this template flex dashboard ([dashboard](https://bryantstats.github.io/math421/final/flex_template.html), [Rmd](https://bryantstats.github.io/math421/final/flex_template.Rmd))  to create a flex dashboard that
+
+- Has a side bar
+
+- Has at least three main Tabs
+
+- Has at least four plots
+
+- Shows a table data that can be searched
+
+
+[Link to Question 2](finalQ2.html)
+
+### Question 3. 
+
+We want users to be able to interact with our dashboard.  This can be done using `shiny`. A flex dashboard using `shiny` requires a domain to host it.  We will use shinyapps.io, which can host five dashboard for free. If we want to host more than five dashboards, we can create multiple accounts at shinyapps.io. 
+
+
+Follow these below steps to create a shiny flex dashboard then publish it. 
+
+- Install the following packages `shiny`, `packrat`, `rsconnect`. 
+
+- Go to https://www.shinyapps.io/ and create an account 
+
+- Go to https://www.shinyapps.io/admin/#/dashboard.  Account -> Tokens -> Show -> Show secret-> Copy the secret code. 
+
+It should look like this
+
+
+```{r, eval=FALSE}
+rsconnect::setAccountInfo(name='fall20',
+			  token='E130D64F22776383660DA7EA5251EC04',
+			  secret='mJI7rgq2Wf46g2Wf46g2WNOa+E6NRqr26yG3N5')
+```
+
+- Paste the secret code into Rstudio Console and Run it. 
+
+- Download a sample shiny flex dashboard: [Dashboard](https://sn904109.shinyapps.io/1_flex_select/), [Rmd](https://bryantstats.github.io/math421/final/1_flex_select.Rmd)
+
+- Click `Run Document` (Or Ctrl + Shift + K) to check the dashboard
+
+- On right, top corner click Publish to Publish the dashboard to your acccount on shinyapps.io
+
+- Your published dashboard should look like this
+
+    https://sn904109.shinyapps.io/1_flex_select/
+
+[Link to Question 3](https://pollacksam.shinyapps.io/finalq3/)
+
+### Question 4 - selectInput
+
+Write a shiny flex dashboard that uses `selectInput` and works with a dataset different from the titanic dataset.  
+
+[Similar dashboard](https://sn904109.shinyapps.io/1_flex_select/)
+
+Note:  In the above dashboard, click to Source Code to show the codes. 
+
+Include the link of your dashboard here.
+
+[Link to Question 4](https://pollacksam.shinyapps.io/finalq4/)
+
+### Question 5 - checkboxGroupInput
+
+Write a shiny flex dashboard that uses `checkboxGroupInput` and works with a dataset different from the titanic dataset.   
+
+[Similar dashboard](https://sn904109.shinyapps.io/2_flex_checkbox/)
+
+Include the link of your dashboard here. 
+
+[Link to Question 5](https://pollacksam.shinyapps.io/finalQ5/)
+
+### Question 6 - sliderInput
+
+Write a shiny flex dashboard that uses `sliderInput` and works with a dataset different from the titanic dataset.   
+
+[Similar dashboard](https://sn904109.shinyapps.io/3_flex_slider/)
+
+Include the link of your dashboard here. 
+
+[Link to Question 6](https://pollacksam.shinyapps.io/finalQ6/)
+
+### Question 7 - radioButtons
+
+Write a shiny flex dashboard that uses `radioButtons` and works with a dataset different from the titanic dataset.   
+
+[Similar dashboard](https://sn904109.shinyapps.io/4_flex_radio/)
+
+Include the link of your dashboard here. 
+
+[Link to Question 7](https://pollacksam23.shinyapps.io/finalQ7/)
+
+--- 
+
+**Notice:  You can only run maximum 5 apps on shinyapps.io.  If you are running out of apps, you are recommended to create another shiny account and use multiple accounts.**
+
+---
+
+### Question 8 - dateRangeInput
+
+Write a shiny flex dashboard that uses `dateRangeInput` and works with a dataset different from the titanic dataset.   
+
+[Similar dashboard](https://sn904109.shinyapps.io/5_flex_date_range/)
+
+Include the link of your dashboard here.
+
+[Link to Question 8](https://pollacksam23.shinyapps.io/finalQ8/)
+
+### Question 9 - Combination of Inputs
+
+We can combine different input methods into one dashboard.  Write a shiny flex dashboard and works with a dataset different from the titanic dataset. The dashboard should use at least three different input methods.   
+
+[Similar dashboard](https://snguyen4.shinyapps.io/6_flex_combine/)
+
+Include the link of your dashboard here. 
+
+[Link to Question 9](https://pollacksam23.shinyapps.io/finalQ9/)
+
+-------
+
+### Question 10
+
+Write a dashboard that
+
+- Works with a dataset that have not been used in class
+
+- Has a social media click
+
+- Has a source code click
+
+- Has a side bar
+
+- Has five input methods
+
+- Has at least three main tabs
+
+- Has columns tabs
+
+- Has at least five meaningful plots
+
+- Shows a table data that can be searched
+
+- Has at least one text paragraph
+
+- Includes at least one image
+
+- (Extra Credits) Uses twitter data or text data and text data visualization
+
+Include the link of your dashboard here. 
+
+[Link to Question 10](https://pollacksam23.shinyapps.io/finalQ10/)
+
+-------
+
+### Question 11 - Presentation
+
+Present your dashboard in Question 10 on the final exam day. 
+
+- Present the features of your dashboard 
+
+- Discuss how you organize the codes of the dashboard and the final project.  
+
+- Discuss any error or challenge you had to overcome
+
+- Give an advice for anyone who is about to do this project
+
+-------
+
+### References
+
+
+https://rstudio.github.io/flexdashboard/articles/examples.html
+
+https://bookdown.org/yihui/rmarkdown/dashboards.html
+
+https://epirhandbook.com/en/dashboards-with-r-markdown.html
+
+Check out Shiny official tutorial: https://shiny.rstudio.com/tutorial/
+
+Check out Shiny Galary: https://shiny.rstudio.com/gallery/
+
+Pairs of render and output: https://bookdown.org/weicheng/shinyTutorial/images/outputs.png
+
+Check out some shiny layouts here: https://shiny.rstudio.com/articles/layout-guide.html
+
+Check out shiny dynamic UI here
+
+https://shiny.rstudio.com/gallery/dynamic-ui.html
+
+https://shiny.rstudio.com/articles/dynamic-ui.html
+
+-------

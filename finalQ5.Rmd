@@ -1,0 +1,81 @@
+
+---
+title: "#Celtics Tweets - Check Box"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    logo: logo.png
+    source_code: embed
+    social: menu
+
+runtime: shiny
+---
+
+```{r global, include=FALSE}
+# load data in 'global' chunk so it can be shared by all users of the dashboard
+library(flexdashboard)
+library(tidyverse)
+library(plotly)
+library(knitr)
+library(DT)
+df <- read_csv('final_twitter_data.csv')
+
+df$retweeted <- case_when(
+  df$retweet_count >0 ~ 'TRUE',
+  TRUE ~ 'FALSE'
+)
+
+df$favorited <- case_when(
+  df$favorite_count >0 ~ 'TRUE',
+  TRUE ~ 'FALSE'
+)
+
+celtics_favorited <- unique(df$favorited)
+```
+
+{.sidebar}
+=======================================================================
+
+Many people post tweets with the intention to grab people's attention and potentially start a trending thread. These threads can't exist without the 'like' button. Let's see how many tweets received any likes.  Select the input for the plots. 
+
+```{r}
+checkboxGroupInput(inputId = "favorited_input", 
+                   label = h3("Select Favorited Status"),
+                   choices = unique(df$favorited), 
+                   inline = TRUE,
+                   selected = 'TRUE')
+```
+
+Main Tab 1
+=======================================================================
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Density Plot
+
+```{r}
+renderPlotly({
+  p1 <- df %>% 
+    filter(favorited==input$favorited_input) %>% 
+    ggplot(aes(x=display_text_range, color=is_quote_status))+
+    geom_density()
+  ggplotly(p1)
+})
+```
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Bar Plot
+
+```{r}
+renderPlotly({
+  p2 <- df %>% 
+    filter(favorited==input$favorited_input & possibly_sensitive!='NA') %>%
+    ggplot(aes(x=possibly_sensitive, fill=is_quote_status))+
+    geom_bar()
+  ggplotly(p2)
+})
+```
